@@ -29,6 +29,11 @@
             <artifactId>siddhi-annotations</artifactId>
             <version>${siddhi.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.extension.siddhi.io.tcp</groupId>
+            <artifactId>siddhi-io-tcp</artifactId>
+            <version>${siddhi.tcp.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -77,6 +82,7 @@
 
     <properties>
         <siddhi.version>4.0.0-M69</siddhi.version>
+        <siddhi.tcp.version>2.0.2</siddhi.tcp.version>
     </properties>
 
 
