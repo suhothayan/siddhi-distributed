@@ -27,7 +27,7 @@ public class EventPublisher {
         //Start SiddhiApp runtime
         siddhiAppRuntime.start();
 
-        long eventsToPublish= 1000000;
+        long eventsToPublish= 100000000;
 //        long eventsToPublish = 2;
         //Sending events to Siddhi
         for (int i = 0; i < eventsToPublish; i++) {

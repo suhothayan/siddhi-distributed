@@ -17,6 +17,7 @@ public class TimeWindowServer3 {
 
         String siddhiApp = "" +
                 "@app:name('time-window')\n" +
+                "@app:statistics(reporter = 'console', interval = '5' ) \n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
                 "define stream PartialAggregateStockStream (symbol string, totalPrice double, totalVolume long, countVolume long, id string);\n" +

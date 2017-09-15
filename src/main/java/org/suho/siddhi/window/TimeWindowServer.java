@@ -13,6 +13,7 @@ public class TimeWindowServer {
 
         String siddhiApp = "" +
                 "@app:name('time-window')\n" +
+                "@app:statistics(reporter = 'console', interval = '5' ) \n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
                 "define stream StockEventStream (symbol string, price float, volume long);\n" +
