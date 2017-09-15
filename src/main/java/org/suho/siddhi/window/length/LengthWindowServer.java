@@ -1,12 +1,12 @@
-package org.suho.siddhi.window;
+package org.suho.siddhi.window.length;
 
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 
 /**
- * Standalone window
+ * Standalone length
  */
-public class TimeWindowServer {
+public class LengthWindowServer {
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -22,7 +22,7 @@ public class TimeWindowServer {
                 "define stream AggregateStockStream (symbol string, totalPrice double, avgVolume double);\n" +
                 "                \n" +
                 "@info(name = 'query1') \n" +
-                "from StockEventStream#window.time(15 sec)  \n" +
+                "from StockEventStream#window.length(100000)  \n" +
                 "select symbol, sum(price) as totalPrice, avg(volume) as avgVolume \n" +
                 "group by symbol \n" +
                 "insert into AggregateStockStream ;\n";

@@ -1,4 +1,4 @@
-package org.suho.siddhi.window.distributed;
+package org.suho.siddhi.window.length.distributed;
 
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Standalone window
  */
-public class TimeWindowServer3 {
+public class LengthWindowServer3 {
 
     public static void main(String[] args) throws InterruptedException {
 

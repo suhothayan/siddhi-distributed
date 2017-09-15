@@ -1,4 +1,4 @@
-package org.suho.siddhi.window;
+package org.suho.siddhi.window.time;
 
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;

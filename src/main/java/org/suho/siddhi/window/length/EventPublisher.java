@@ -1,4 +1,4 @@
-package org.suho.siddhi.window.distributed;
+package org.suho.siddhi.window.length;
 
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
@@ -13,10 +13,7 @@ public class EventPublisher {
         String siddhiApp = "" +
                 "@app:name('publisher')\n" +
                 "\n" +
-                "@sink(type='tcp', sync='true', @map(type='binary'), " +
-                "   @distribution(strategy='roundRobin', " +
-                "       @destination(url='tcp://127.0.0.1:9881/time-window/StockEventStream')," +
-                "       @destination(url='tcp://127.0.0.1:9882/time-window/StockEventStream'))) \n" +
+                "@sink(type='tcp', url='tcp://127.0.0.1:9892/time-window/StockEventStream', sync='true', @map(type='binary')) \n" +
                 "define stream StockEventStream (symbol string, price float, volume long);\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();
