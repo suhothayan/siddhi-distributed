@@ -34,6 +34,16 @@
             <artifactId>siddhi-io-tcp</artifactId>
             <version>${siddhi.tcp.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.extension.siddhi.execution.string</groupId>
+            <artifactId>siddhi-execution-string</artifactId>
+            <version>${siddhi.string.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.extension.siddhi.execution.unique</groupId>
+            <artifactId>siddhi-execution-unique</artifactId>
+            <version>${siddhi.unique.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -81,8 +91,10 @@
     </repositories>
 
     <properties>
-        <siddhi.version>4.0.0-M69</siddhi.version>
+        <siddhi.version>4.0.0-M70-SNAPSHOT</siddhi.version>
         <siddhi.tcp.version>2.0.2</siddhi.tcp.version>
+        <siddhi.string.version>4.0.1</siddhi.string.version>
+        <siddhi.unique.version>4.0.8</siddhi.unique.version>
     </properties>
 
 

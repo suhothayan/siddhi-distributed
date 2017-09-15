@@ -1,12 +1,16 @@
-package org.suho.siddhi.window;
+package org.suho.siddhi.window.distributed;
 
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
+import org.wso2.siddhi.core.util.config.InMemoryConfigManager;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Standalone window
  */
-public class TimeWindowServer {
+public class TimeWindowServer2 {
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -17,16 +21,19 @@ public class TimeWindowServer {
                 "@source(type='tcp', @map(type='binary')) \n" +
                 "define stream StockEventStream (symbol string, price float, volume long);\n" +
                 "\n" +
-                "@sink(type='tcp', url='tcp://127.0.0.1:9895/consumer/AggregateStockStream', sync='true', @map(type='binary')) \n" +
-                "define stream AggregateStockStream (symbol string, totalPrice double, avgVolume double);\n" +
+                "@sink(type='tcp', url='tcp://127.0.0.1:9883/time-window/PartialAggregateStockStream', sync='true', @map(type='binary')) \n" +
+                "define stream PartialAggregateStockStream (symbol string, totalPrice double, totalVolume long, countVolume long, id string);\n" +
                 "                \n" +
                 "@info(name = 'query1') \n" +
                 "from StockEventStream#window.time(15 sec)  \n" +
-                "select symbol, sum(price) as totalPrice, avg(volume) as avgVolume \n" +
+                "select symbol, sum(price) as totalPrice, sum(volume) as totalVolume, count(volume) as countVolume, '2' as id \n" +
                 "group by symbol \n" +
-                "insert into AggregateStockStream ;\n";
+                "insert into PartialAggregateStockStream ;\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();
+        Map<String, String> executionConfig = new HashMap<>();
+        executionConfig.put("source.tcp.port", "9882");
+        siddhiManager.setConfigManager(new InMemoryConfigManager(executionConfig, null));
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
 
         //Start SiddhiApp runtime
