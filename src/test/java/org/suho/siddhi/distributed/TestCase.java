@@ -11,7 +11,8 @@ public class TestCase {
     public void testFoo() {
 
         System.out.println("Hi 123");
-        System.out.println("Java home : " + System.getProperty("JAVA_HOME"));
+        System.out.println("Java home : " + System.getenv("JAVA_HOME"));
+        System.out.println("foo : " + System.getenv("foo"));
 
     }
 }
