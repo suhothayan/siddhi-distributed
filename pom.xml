@@ -30,6 +30,11 @@
             <version>${siddhi.version}</version>
         </dependency>
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.extension.siddhi.io.tcp</groupId>
             <artifactId>siddhi-io-tcp</artifactId>
             <version>${siddhi.tcp.version}</version>
@@ -71,7 +76,7 @@
                     <reportFormat>brief</reportFormat>
                     <useFile>false</useFile>
                     <forkMode>once</forkMode>
-                    <argLine>${surefireArgLine} -ea -Xmx512m</argLine>
+                    <!--<argLine>${surefireArgLine} -ea -Xmx512m</argLine>-->
                 </configuration>
             </plugin>
         </plugins>
@@ -95,6 +100,7 @@
         <siddhi.tcp.version>2.0.2</siddhi.tcp.version>
         <siddhi.string.version>4.0.1</siddhi.string.version>
         <siddhi.unique.version>4.0.8</siddhi.unique.version>
+        <junit.version>4.12</junit.version>
     </properties>
 
 
