@@ -57,6 +57,10 @@ import java.util.Map;
         parameters = {
                 @Parameter(name = "window.length",
                         description = "The number of events that should be included in a sliding length window.",
+                        type = {DataType.INT}),
+                @Parameter(name = "sequence.no",
+                        description = "The sequence number within with the distributed sliding length window should " +
+                                "be processed.",
                         type = {DataType.INT})
         },
         examples = @Example(
