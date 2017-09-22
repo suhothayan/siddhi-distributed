@@ -13,6 +13,8 @@ public class TestCase {
         System.out.println("Hi 123");
         System.out.println("Java home : " + System.getenv("JAVA_HOME"));
         System.out.println("foo : " + System.getenv("foo").equals("bar"));
+        System.out.println("foo User : " + System.getenv("fooUser").equals("foo1"));
+        System.out.println("foo password : " + System.getenv("fooPassword").equals("bar1"));
 
     }
 }
