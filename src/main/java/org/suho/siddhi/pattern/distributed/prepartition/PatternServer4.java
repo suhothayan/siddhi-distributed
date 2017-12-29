@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.suho.siddhi.pattern.distributed;
+package org.suho.siddhi.pattern.distributed.prepartition;
 
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * Standalone window
  */
-public class PatternServer2 {
+public class PatternServer4 {
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -38,23 +38,25 @@ public class PatternServer2 {
                 "@app:statistics(reporter = 'console', interval = '5' ) \n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream CardStream (cardId string, amount float, location string);\n" +
+                "define stream CardStreamS (cardId string, amount float, location string);\n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
                 "define stream PossibleFraudStream1 (initialPurchaseAmount float, timestamp long);\n" +
                 "\n" +
-                "@sink(type='tcp', url='tcp://127.0.0.1:9883/pattern/PossibleFraudStream2', sync='true', @map(type='binary')) \n" +
+                "@sink(type='tcp', sync='true', @map(type='binary'), " +
+                "   @distribution(strategy='roundRobin', " +
+                "       @destination(url='tcp://127.0.0.1:9885/pattern/PossibleFraudStream2'))) \n" +
                 "define stream PossibleFraudStream2 (initialPurchaseAmount float, timestamp long);\n" +
                 "\n" +
                 "@info(name = 'query1') \n" +
-                "from every a=PossibleFraudStream1 ->  b = CardStream[amount < 100 and (currentTimeMillis() - a.timestamp) < 60000]\n" +
+                "from every a=PossibleFraudStream1 ->  b = CardStreamS[(currentTimeMillis() - a.timestamp) < 60000]\n" +
                 "    within 1 min\n" +
                 "select a.initialPurchaseAmount, a.timestamp  \n" +
                 "insert into PossibleFraudStream2;\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();
         Map<String, String> executionConfig = new HashMap<>();
-        executionConfig.put("source.tcp.port", "9882");
+        executionConfig.put("source.tcp.port", "9884");
         siddhiManager.setConfigManager(new InMemoryConfigManager(executionConfig, null));
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
 

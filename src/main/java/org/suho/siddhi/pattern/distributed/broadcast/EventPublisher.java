@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.suho.siddhi.pattern.distributed;
+package org.suho.siddhi.pattern.distributed.broadcast;
 
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
@@ -53,7 +53,7 @@ public class EventPublisher {
         //Sending events to Siddhi
         Random random = new Random();
         for (int i = 0; i < eventsToPublish; i++) {
-            inputHandler.send(new Object[]{"1234", random.nextInt(200)*1.0f, "SL"});
+            inputHandler.send(new Object[]{"1234", random.nextInt(2000)*1.0f, "SL"});
         }
         System.out.println("published");
         Thread.sleep(1000000);

@@ -16,12 +16,10 @@
  * under the License.
  */
 
-package org.suho.siddhi.pattern.distributed;
+package org.suho.siddhi.pattern.distributed.broadcast;
 
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
-import org.wso2.siddhi.core.event.Event;
-import org.wso2.siddhi.core.stream.output.StreamCallback;
 import org.wso2.siddhi.core.util.config.InMemoryConfigManager;
 
 import java.util.HashMap;
@@ -30,44 +28,32 @@ import java.util.Map;
 /**
  * Standalone window
  */
-public class EventConsumer {
+public class PatternServer1 {
 
     public static void main(String[] args) throws InterruptedException {
 
 
         String siddhiApp = "" +
-                "@app:name('consumer')\n" +
+                "@app:name('pattern')\n" +
+                "@app:statistics(reporter = 'console', interval = '5' ) \n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream PossibleFraudStream (initialPurchaseAmount float, lastPurchaseAmount float, location string);\n";
+                "define stream CardStream (cardId string, amount float, location string);\n" +
+                "\n" +
+                "@sink(type='tcp', url='tcp://127.0.0.1:9882/pattern/PossibleFraudStream1', sync='true', @map(type='binary')) \n" +
+                "define stream PossibleFraudStream1 (initialPurchaseAmount float, timestamp long);\n" +
+                "\n" +
+                "@info(name = 'query1') \n" +
+                "from every a = CardStream[amount < 100]\n" +
+                "    within 1 min\n" +
+                "select a.amount as initialPurchaseAmount, currentTimeMillis() as timestamp  \n" +
+                "insert into PossibleFraudStream1;\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();
         Map<String, String> executionConfig = new HashMap<>();
-        executionConfig.put("source.tcp.port", "9895");
+        executionConfig.put("source.tcp.port", "9881");
         siddhiManager.setConfigManager(new InMemoryConfigManager(executionConfig, null));
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
-
-        siddhiAppRuntime.addCallback("PossibleFraudStream", new StreamCallback() {
-            public int eventCount = 0;
-//            public int timeSpent = 0;
-            long startTime = System.currentTimeMillis();
-
-            @Override
-            public void receive(Event[] events) {
-                for (Event event : events) {
-                    eventCount++;
-//                    timeSpent += (System.currentTimeMillis() - (Long) event.getData(3));
-                    if (eventCount % 10000 == 0) {
-                        System.out.println("Throughput : " + (eventCount * 1000) / ((System.currentTimeMillis()) -
-                                startTime));
-//                        System.out.println("Time spent :  " + (timeSpent * 1.0 / eventCount));
-                        startTime = System.currentTimeMillis();
-                        eventCount = 0;
-//                        timeSpent = 0;
-                    }
-                }
-            }
-        });
 
         //Start SiddhiApp runtime
         siddhiAppRuntime.start();

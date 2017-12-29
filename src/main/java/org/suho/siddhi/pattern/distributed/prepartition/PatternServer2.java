@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.suho.siddhi.pattern.distributed;
+package org.suho.siddhi.pattern.distributed.prepartition;
 
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * Standalone window
  */
-public class PatternServer3 {
+public class PatternServer2 {
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -38,23 +38,23 @@ public class PatternServer3 {
                 "@app:statistics(reporter = 'console', interval = '5' ) \n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream CardStream (cardId string, amount float, location string);\n" +
+                "define stream CardStreamS (cardId string, amount float, location string);\n" +
                 "\n" +
-                "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream PossibleFraudStream2 (initialPurchaseAmount float, timestamp long);\n" +
-                "\n" +
-                "@sink(type='tcp', url='tcp://127.0.0.1:9895/consumer/PossibleFraudStream', sync='true', @map(type='binary')) \n" +
-                "define stream PossibleFraudStream (initialPurchaseAmount float, lastPurchaseAmount float, location string);\n" +
+                "@sink(type='tcp', sync='true', @map(type='binary'), " +
+                "   @distribution(strategy='roundRobin', " +
+                "       @destination(url='tcp://127.0.0.1:9883/pattern/PossibleFraudStream1')," +
+                "       @destination(url='tcp://127.0.0.1:9884/pattern/PossibleFraudStream1'))) \n" +
+                "define stream PossibleFraudStream1 (initialPurchaseAmount float, timestamp long);\n" +
                 "\n" +
                 "@info(name = 'query1') \n" +
-                "from every a=PossibleFraudStream2 ->  b = CardStream[amount > 100 and (currentTimeMillis() - a.timestamp) < 60000]\n" +
+                "from every a = CardStreamS\n" +
                 "    within 1 min\n" +
-                "select a.initialPurchaseAmount, b.amount as lastPurchaseAmount, b.location as location  \n" +
-                "insert into PossibleFraudStream;\n";
+                "select a.amount as initialPurchaseAmount, currentTimeMillis() as timestamp  \n" +
+                "insert into PossibleFraudStream1;\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();
         Map<String, String> executionConfig = new HashMap<>();
-        executionConfig.put("source.tcp.port", "9883");
+        executionConfig.put("source.tcp.port", "9882");
         siddhiManager.setConfigManager(new InMemoryConfigManager(executionConfig, null));
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
 
