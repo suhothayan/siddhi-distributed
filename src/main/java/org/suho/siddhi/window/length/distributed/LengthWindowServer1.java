@@ -16,17 +16,17 @@ public class LengthWindowServer1 {
 
 
         String siddhiApp = "" +
-                "@app:name('time-window')\n" +
+                "@app:name('length-window')\n" +
                 "@app:statistics(reporter = 'console', interval = '5' ) \n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream StockEventStream (symbol string, price float, volume long);\n" +
+                "define stream StockEventStream (symbol string, price float, volume long, seqNo long);\n" +
                 "\n" +
-                "@sink(type='tcp', url='tcp://127.0.0.1:9883/time-window/PartialAggregateStockStream', sync='true', @map(type='binary')) \n" +
+                "@sink(type='tcp', url='tcp://127.0.0.1:9883/length-window/PartialAggregateStockStream', sync='true', @map(type='binary')) \n" +
                 "define stream PartialAggregateStockStream (symbol string, totalPrice double, totalVolume long, countVolume long, id string);\n" +
                 "\n" +
                 "@info(name = 'query1') \n" +
-                "from StockEventStream#window.length(100000)  \n" +
+                "from StockEventStream#window.externalTime(seqNo, 100000)  \n" +
                 "select symbol, sum(price) as totalPrice, sum(volume) as totalVolume, count(volume) as countVolume, '1' as id \n" +
                 "group by symbol \n" +
                 "insert into PartialAggregateStockStream ;\n";

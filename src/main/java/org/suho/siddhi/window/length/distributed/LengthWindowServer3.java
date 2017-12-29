@@ -16,7 +16,7 @@ public class LengthWindowServer3 {
 
 
         String siddhiApp = "" +
-                "@app:name('time-window')\n" +
+                "@app:name('length-window')\n" +
                 "@app:statistics(reporter = 'console', interval = '5' ) \n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
