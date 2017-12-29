@@ -96,10 +96,10 @@
     </repositories>
 
     <properties>
-        <siddhi.version>4.0.0-M80</siddhi.version>
-        <siddhi.tcp.version>2.0.2</siddhi.tcp.version>
-        <siddhi.string.version>4.0.1</siddhi.string.version>
-        <siddhi.unique.version>4.0.8</siddhi.unique.version>
+        <siddhi.version>4.0.6</siddhi.version>
+        <siddhi.tcp.version>2.0.14</siddhi.tcp.version>
+        <siddhi.string.version>4.0.10</siddhi.string.version>
+        <siddhi.unique.version>4.0.22-SNAPSHOT</siddhi.unique.version>
         <junit.version>4.12</junit.version>
     </properties>
 
