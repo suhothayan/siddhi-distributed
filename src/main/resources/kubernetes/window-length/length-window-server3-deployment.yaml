@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: length-window-server3-deployment
+  labels:
+    app: length-window-server3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: length-window-server3
+  template:
+    metadata:
+      labels:
+        app: length-window-server3
+    spec:
+      containers:
+      - name: llength-window-server3
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 9894
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.window.length.distributed.LengthWindowServer"
+        -
+          name: CONSUME
+          value: "9894"
+        -
+          name: PUBLISH
+          value: "length-window-consumer-service:9895"
+        -
+          name: DATA
+          value: "100000"
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: length-window-server3-service
+spec:
+  selector:
+    app: length-window-server3
+  ports:
+  - protocol: TCP
+    port: 9894
+    targetPort: 9894

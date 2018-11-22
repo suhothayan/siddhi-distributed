@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: length-window-publisher-deployment
+  labels:
+    app: length-window-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: length-window-publisher
+  template:
+    metadata:
+      labels:
+        app: length-window-publisher
+    spec:
+      containers:
+      - name: llength-window-publisher
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 9894
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.window.length.distributed.EventPublisher"
+        -
+          name: CONSUME
+          value: "-"
+        -
+          name: PUBLISH
+          value: "length-window-server1-service:9894,length-window-server2-service:9894,length-window-server3-service:9894"
+        -
+          name: DATA
+          value: "-"

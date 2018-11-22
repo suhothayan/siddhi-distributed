@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: length-window-consumer-deployment
+  labels:
+    app: length-window-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: length-window-consumer
+  template:
+    metadata:
+      labels:
+        app: length-window-consumer
+    spec:
+      containers:
+      - name: length-window-consumer
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 9895
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.window.length.distributed.EventConsumer"
+        -
+          name: CONSUME
+          value: "9895"
+        -
+          name: PUBLISH
+          value: "-"
+        -
+          name: DATA
+          value: "-"
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: length-window-consumer-service
+spec:
+  selector:
+    app: length-window-consumer
+  ports:
+  - protocol: TCP
+    port: 9895
+    targetPort: 9895

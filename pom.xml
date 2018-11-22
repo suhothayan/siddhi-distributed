@@ -40,6 +40,11 @@
             <version>${siddhi.tcp.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.wso2.extension.siddhi.map.binary</groupId>
+            <artifactId>siddhi-map-binary</artifactId>
+            <version>${siddhi.map.binary.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.extension.siddhi.execution.string</groupId>
             <artifactId>siddhi-execution-string</artifactId>
             <version>${siddhi.string.version}</version>
@@ -79,6 +84,67 @@
                     <!--<argLine>${surefireArgLine} -ea -Xmx512m</argLine>-->
                 </configuration>
             </plugin>
+            <!--<plugin>-->
+                <!--<artifactId>maven-assembly-plugin</artifactId>-->
+                <!--<configuration>-->
+                    <!--<archive>-->
+                        <!--&lt;!&ndash;<manifest>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<mainClass>org.suho.siddhi.window.length.EventConsumer</mainClass>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</manifest>&ndash;&gt;-->
+                    <!--</archive>-->
+                    <!--<descriptorRefs>-->
+                        <!--<descriptorRef>jar-with-dependencies</descriptorRef>-->
+                    <!--</descriptorRefs>-->
+                <!--</configuration>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>make-assembly</id> &lt;!&ndash; this is used for inheritance merges &ndash;&gt;-->
+                        <!--<phase>package</phase> &lt;!&ndash; bind to the packaging phase &ndash;&gt;-->
+                        <!--<goals>-->
+                            <!--<goal>single</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>src/main/resources/docker/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <outputDirectory>src/main/resources/docker/lib</outputDirectory>
+                </configuration>
+            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-jar-plugin</artifactId>-->
+                <!--<configuration>-->
+                    <!--<archive>-->
+                        <!--<manifest>-->
+                            <!--<addClasspath>true</addClasspath>-->
+                            <!--<classpathPrefix>lib/</classpathPrefix>-->
+                            <!--<mainClass>theMainClass</mainClass>-->
+                        <!--</manifest>-->
+                    <!--</archive>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 
@@ -96,10 +162,11 @@
     </repositories>
 
     <properties>
-        <siddhi.version>4.0.6</siddhi.version>
-        <siddhi.tcp.version>2.0.14</siddhi.tcp.version>
-        <siddhi.string.version>4.0.10</siddhi.string.version>
-        <siddhi.unique.version>4.0.22-SNAPSHOT</siddhi.unique.version>
+        <siddhi.version>4.2.34</siddhi.version>
+        <siddhi.tcp.version>2.0.20</siddhi.tcp.version>
+        <siddhi.map.binary.version>1.0.7</siddhi.map.binary.version>
+        <siddhi.string.version>4.0.24</siddhi.string.version>
+        <siddhi.unique.version>4.0.27</siddhi.unique.version>
         <junit.version>4.12</junit.version>
     </properties>
 
