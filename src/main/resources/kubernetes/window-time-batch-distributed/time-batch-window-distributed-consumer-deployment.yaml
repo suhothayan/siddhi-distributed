@@ -1,49 +1,48 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: length-window-unique-server-deployment
+  name: time-batch-window-distributed-consumer-deployment
   labels:
-    app: length-window-unique-server
+    app: time-batch-window-distributed-consumer
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: length-window-unique-server
+      app: time-batch-window-distributed-consumer
   template:
     metadata:
       labels:
-        app: length-window-unique-server
+        app: time-batch-window-distributed-consumer
     spec:
       containers:
-      - name: llength-window-unique-server
+      - name: time-batch-window-distributed-consumer
         image: suhothayan/siddhitest:latest
         ports:
         - containerPort: 80
         env:
         -
           name: MAIN_CLASS
-          value: "org.suho.siddhi.window.length.distributed.LengthWindowUniqueServer"
+          value: "org.suho.siddhi.window.timeBatch.distributed.EventConsumer"
         -
           name: CONSUME
           value: "80"
         -
           name: PUBLISH
-          value: "length-window-consumer-service:80"
+          value: "-"
         -
           name: DATA1
           value: "-"
         -
           name: DATA2
           value: "-"
-
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: length-window-unique-server-service
+  name: time-batch-window-distributed-consumer-service
 spec:
   selector:
-    app: length-window-unique-server
+    app: time-batch-window-distributed-consumer
   ports:
   - protocol: TCP
     port: 80

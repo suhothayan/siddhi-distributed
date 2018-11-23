@@ -22,13 +22,13 @@ spec:
         env:
         -
           name: MAIN_CLASS
-          value: "org.suho.siddhi.window.length.distributed.EventPublisher"
+          value: "org.suho.siddhi.window.length.EventPublisher"
         -
           name: CONSUME
           value: "-"
         -
           name: PUBLISH
-          value: "length-window-server1-service:80,length-window-server2-service:80"
+          value: "length-window-server-service:80"
         -
           name: DATA1
           value: "-"

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: time-window-server-deployment
+  labels:
+    app: time-window-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: time-window-server
+  template:
+    metadata:
+      labels:
+        app: time-window-server
+    spec:
+      containers:
+      - name: llength-window-server
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.window.time.TimeWindowServer"
+        -
+          name: CONSUME
+          value: "80"
+        -
+          name: PUBLISH
+          value: "time-window-consumer-service:80"
+        -
+          name: DATA1
+          value: "15 sec"
+        -
+          name: DATA2
+          value: "-"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: time-window-server-service
+spec:
+  selector:
+    app: time-window-server
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

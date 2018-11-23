@@ -41,15 +41,17 @@ public class EventConsumer {
         }
 
         String consume = "9895";
-        String publish = "";
-        String data = "100000";
+        String publish = "-";
+        String data1 = "-";
+        String data2 = "-";
         if (args.length != 0) {
-            if (args.length == 3) {
+            if (args.length == 4) {
                 consume = args[0];
                 publish = args[1];
-                data = args[2];
+                data1 = args[2];
+                data2 = args[3];
             } else {
-                throw new Error("More " + args.length + " arguments found expecting 2.");
+                throw new Error("More " + args.length + " arguments found expecting 4.");
             }
         }
 
@@ -67,17 +69,19 @@ public class EventConsumer {
 
         siddhiAppRuntime.addCallback("AggregateStockStream", new StreamCallback() {
             public int eventCount = 0;
-//            public int timeSpent = 0;
+            //            public int timeSpent = 0;
             long startTime = System.currentTimeMillis();
 
             @Override
             public void receive(Event[] events) {
-                EventPrinter.print(events);
+                if (eventCount == 0) {
+                    EventPrinter.print(events);
+                }
                 for (Event event : events) {
                     eventCount++;
 //                    timeSpent += (System.currentTimeMillis() - (Long) event.getData(3));
-                    if (eventCount % 10000 == 0) {
-                        System.out.println("Throughput : " + (eventCount * 1000) / ((System.currentTimeMillis()) -
+                    if (eventCount % 100 == 0) {
+                        System.out.println((eventCount * 1000) / ((System.currentTimeMillis()) -
                                 startTime));
 //                        System.out.println("Time spent :  " + (timeSpent * 1.0 / eventCount));
                         startTime = System.currentTimeMillis();
@@ -88,6 +92,7 @@ public class EventConsumer {
             }
         });
 
+        System.out.println("Throughput : ");
         //Start SiddhiApp runtime
         siddhiAppRuntime.start();
 

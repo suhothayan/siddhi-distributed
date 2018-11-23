@@ -28,10 +28,30 @@ import java.util.Map;
 /**
  * Standalone window
  */
-public class TimeBatchWindowServer3 {
+public class TimeBatchWindowUniqueServer {
 
     public static void main(String[] args) throws InterruptedException {
 
+        System.out.println("Program Arguments:");
+        for (String arg : args) {
+            System.out.println("\t" + arg);
+        }
+        Thread.sleep(3000);
+
+        String consume = "9893";
+        String publish = "127.0.0.1:9895";
+        String data1 = "2";
+        String data2 = "-";
+        if (args.length != 0) {
+            if (args.length == 4) {
+                consume = args[0];
+                publish = args[1];
+                data1 = args[2];
+                data2 = args[3];
+            } else {
+                throw new Error("More " + args.length + " arguments found expecting 4.");
+            }
+        }
 
         String siddhiApp = "" +
                 "@app:name('time-window')\n" +
@@ -40,11 +60,11 @@ public class TimeBatchWindowServer3 {
                 "@source(type='tcp', @map(type='binary')) \n" +
                 "define stream PartialAggregateStockStream (symbol string, totalPrice double, totalVolume long, countVolume long, id string);\n" +
                 "\n" +
-                "@sink(type='tcp', url='tcp://127.0.0.1:9895/consumer/AggregateStockStream', sync='true', @map(type='binary')) \n" +
+                "@sink(type='tcp', url='tcp://"+publish+"/consumer/AggregateStockStream', sync='true', @map(type='binary')) \n" +
                 "define stream AggregateStockStream (symbol string, totalPrice double, avgVolume double);\n" +
                 "                \n" +
                 "@info(name = 'query1') \n" +
-                "from PartialAggregateStockStream#window.unique:timeLengthBatch(str:concat(id, '::', symbol),15 sec, 5, 2) \n" +
+                "from PartialAggregateStockStream#window.unique:timeLengthBatch(str:concat(id, '::', symbol),15 sec, 0, "+data1+") \n" +
                 "select symbol, sum(totalPrice) as totalPrice, sum(totalVolume)*1.0/sum(countVolume) as avgVolume \n" +
                 "group by symbol \n" +
                 "insert into AggregateStockStream ;\n " +
@@ -54,7 +74,7 @@ public class TimeBatchWindowServer3 {
 
         SiddhiManager siddhiManager = new SiddhiManager();
         Map<String, String> executionConfig = new HashMap<>();
-        executionConfig.put("source.tcp.port", "9883");
+        executionConfig.put("source.tcp.port", consume);
         siddhiManager.setConfigManager(new InMemoryConfigManager(executionConfig, null));
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
 

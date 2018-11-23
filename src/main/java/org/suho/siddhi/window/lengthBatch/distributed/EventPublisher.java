@@ -30,18 +30,24 @@ import java.util.ArrayList;
 public class EventPublisher {
     public static void main(String[] args) throws InterruptedException {
 
-        Thread.sleep(6000);
+        System.out.println("Program Arguments:");
+        for (String arg : args) {
+            System.out.println("\t" + arg);
+        }
+        Thread.sleep(9000);
 
-        String consume = "";
-        String publish = "127.0.0.1:9881,127.0.0.1:9882,127.0.0.1:9883";
-        String data = "100000";
+        String consume = "-";
+        String publish = "127.0.0.1:9881,127.0.0.1:9882";
+        String data1 = "-";
+        String data2 = "-";
         if (args.length != 0) {
-            if (args.length == 3) {
+            if (args.length == 4) {
                 consume = args[0];
                 publish = args[1];
-                data = args[2];
+                data1 = args[2];
+                data2 = args[3];
             } else {
-                throw new Error("More " + args.length + " arguments found expecting 2.");
+                throw new Error("More " + args.length + " arguments found expecting 4.");
             }
         }
         String[] publishUrls = publish.split(",");

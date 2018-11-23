@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: time-batch-window-server-deployment
+  labels:
+    app: time-batch-window-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: time-batch-window-server
+  template:
+    metadata:
+      labels:
+        app: time-batch-window-server
+    spec:
+      containers:
+      - name: llength-window-server
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.window.timeBatch.TimeBatchWindowServer"
+        -
+          name: CONSUME
+          value: "80"
+        -
+          name: PUBLISH
+          value: "time-batch-window-consumer-service:80"
+        -
+          name: DATA1
+          value: "10000"
+        -
+          name: DATA2
+          value: "-"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: time-batch-window-server-service
+spec:
+  selector:
+    app: time-batch-window-server
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

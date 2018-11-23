@@ -18,10 +18,10 @@ public class EventPublisher {
         }
         Thread.sleep(9000);
 
-        String consume = "";
+        String consume = "-";
         String publish = "127.0.0.1:9881,127.0.0.1:9882";
-        String data1 = "100000";
-        String data2 = "1";
+        String data1 = "-";
+        String data2 = "-";
         if (args.length != 0) {
             if (args.length == 4) {
                 consume = args[0];
@@ -29,7 +29,7 @@ public class EventPublisher {
                 data1 = args[2];
                 data2 = args[3];
             } else {
-                throw new Error("More " + args.length + " arguments found expecting 2.");
+                throw new Error("More " + args.length + " arguments found expecting 4.");
             }
         }
         String[] publishUrls = publish.split(",");

@@ -22,7 +22,7 @@ spec:
         env:
         -
           name: MAIN_CLASS
-          value: "org.suho.siddhi.window.length.distributed.EventConsumer"
+          value: "org.suho.siddhi.window.length.EventConsumer"
         -
           name: CONSUME
           value: "80"

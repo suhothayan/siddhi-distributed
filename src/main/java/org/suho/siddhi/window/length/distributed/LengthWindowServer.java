@@ -49,7 +49,7 @@ public class LengthWindowServer {
                 data1 = args[2];
                 data2 = args[3];
             } else {
-                throw new Error("More " + args.length + " arguments found expecting 2.");
+                throw new Error("More " + args.length + " arguments found expecting 4.");
             }
         }
 

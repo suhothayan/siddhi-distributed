@@ -32,7 +32,7 @@ public class EventConsumer {
                 data1 = args[2];
                 data2 = args[3];
             } else {
-                throw new Error("More " + args.length + " arguments found expecting 2.");
+                throw new Error("More " + args.length + " arguments found expecting 4.");
             }
         }
 
@@ -59,7 +59,7 @@ public class EventConsumer {
                     eventCount++;
 //                    timeSpent += (System.currentTimeMillis() - (Long) event.getData(3));
                     if (eventCount % 10000 == 0) {
-                        System.out.println("Throughput : " + (eventCount * 1000) / ((System.currentTimeMillis()) -
+                        System.out.println((eventCount * 1000) / ((System.currentTimeMillis()) -
                                 startTime));
 //                        System.out.println("Time spent :  " + (timeSpent * 1.0 / eventCount));
                         startTime = System.currentTimeMillis();
@@ -70,6 +70,7 @@ public class EventConsumer {
             }
         });
 
+        System.out.println("Throughput : ");
         //Start SiddhiApp runtime
         siddhiAppRuntime.start();
 

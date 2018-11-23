@@ -1,49 +1,48 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: length-window-server2-deployment
+  name: length-batch-window-server-deployment
   labels:
-    app: length-window-server2
+    app: length-batch-window-server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: length-window-server2
+      app: length-batch-window-server
   template:
     metadata:
       labels:
-        app: length-window-server2
+        app: length-batch-window-server
     spec:
       containers:
-      - name: llength-window-server2
+      - name: llength-window-server
         image: suhothayan/siddhitest:latest
         ports:
         - containerPort: 80
         env:
         -
           name: MAIN_CLASS
-          value: "org.suho.siddhi.window.length.distributed.LengthWindowServer"
+          value: "org.suho.siddhi.window.lengthBatch.LengthBatchWindowServer"
         -
           name: CONSUME
           value: "80"
         -
           name: PUBLISH
-          value: "length-window-unique-server-service:80"
+          value: "length-batch-window-consumer-service:80"
         -
           name: DATA1
-          value: "100000"
+          value: "10000"
         -
           name: DATA2
-          value: "2"
-
+          value: "-"
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: length-window-server2-service
+  name: length-batch-window-server-service
 spec:
   selector:
-    app: length-window-server2
+    app: length-batch-window-server
   ports:
   - protocol: TCP
     port: 80

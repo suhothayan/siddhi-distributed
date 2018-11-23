@@ -22,7 +22,7 @@ public class LengthWindowServer2 {
                 publish = args[1];
                 data = args[2];
             } else {
-                throw new Error("More " + args.length + " arguments found expecting 2.");
+                throw new Error("More " + args.length + " arguments found expecting 4.");
             }
         }
 

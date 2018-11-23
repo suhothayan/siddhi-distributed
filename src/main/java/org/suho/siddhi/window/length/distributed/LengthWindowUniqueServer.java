@@ -40,8 +40,8 @@ public class LengthWindowUniqueServer {
 
         String consume = "9893";
         String publish = "127.0.0.1:9895";
-        String data1 = "100000";
-        String data2 = "1";
+        String data1 = "-";
+        String data2 = "-";
         if (args.length != 0) {
             if (args.length == 4) {
                 consume = args[0];
@@ -49,7 +49,7 @@ public class LengthWindowUniqueServer {
                 data1 = args[2];
                 data2 = args[3];
             } else {
-                throw new Error("More " + args.length + " arguments found expecting 2.");
+                throw new Error("More " + args.length + " arguments found expecting 4.");
             }
         }
 

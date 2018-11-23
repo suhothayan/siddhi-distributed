@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: time-batch-window-distributed-publisher-deployment
+  labels:
+    app: time-batch-window-distributed-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: time-batch-window-distributed-publisher
+  template:
+    metadata:
+      labels:
+        app: time-batch-window-distributed-publisher
+    spec:
+      containers:
+      - name: llength-window-publisher
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.window.timeBatch.distributed.EventPublisher"
+        -
+          name: CONSUME
+          value: "-"
+        -
+          name: PUBLISH
+          value: "time-batch-window-distributed-server1-service:80,time-batch-window-distributed-server2-service:80"
+        -
+          name: DATA1
+          value: "-"
+        -
+          name: DATA2
+          value: "-"

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: length-batch-window-consumer-deployment
+  labels:
+    app: length-batch-window-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: length-batch-window-consumer
+  template:
+    metadata:
+      labels:
+        app: length-batch-window-consumer
+    spec:
+      containers:
+      - name: length-batch-window-consumer
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.window.lengthBatch.EventConsumer"
+        -
+          name: CONSUME
+          value: "80"
+        -
+          name: PUBLISH
+          value: "-"
+        -
+          name: DATA1
+          value: "-"
+        -
+          name: DATA2
+          value: "-"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: length-batch-window-consumer-service
+spec:
+  selector:
+    app: length-batch-window-consumer
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

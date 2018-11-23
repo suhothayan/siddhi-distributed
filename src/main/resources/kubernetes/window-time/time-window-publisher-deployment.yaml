@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: time-window-publisher-deployment
+  labels:
+    app: time-window-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: time-window-publisher
+  template:
+    metadata:
+      labels:
+        app: time-window-publisher
+    spec:
+      containers:
+      - name: llength-window-publisher
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.window.time.EventPublisher"
+        -
+          name: CONSUME
+          value: "-"
+        -
+          name: PUBLISH
+          value: "time-window-server-service:80"
+        -
+          name: DATA1
+          value: "-"
+        -
+          name: DATA2
+          value: "-"
