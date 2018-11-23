@@ -18,21 +18,23 @@ spec:
       - name: length-window-consumer
         image: suhothayan/siddhitest:latest
         ports:
-        - containerPort: 9895
+        - containerPort: 80
         env:
         -
           name: MAIN_CLASS
           value: "org.suho.siddhi.window.length.distributed.EventConsumer"
         -
           name: CONSUME
-          value: "9895"
+          value: "80"
         -
           name: PUBLISH
           value: "-"
         -
-          name: DATA
+          name: DATA1
           value: "-"
-
+        -
+          name: DATA2
+          value: "-"
 ---
 kind: Service
 apiVersion: v1
@@ -43,5 +45,5 @@ spec:
     app: length-window-consumer
   ports:
   - protocol: TCP
-    port: 9895
-    targetPort: 9895
+    port: 80
+    targetPort: 80

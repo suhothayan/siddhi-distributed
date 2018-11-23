@@ -18,7 +18,8 @@ RUN chmod 700 /etc/bootstrap.sh
 ENV MAIN_CLASS ""
 ENV CONSUME "-"
 ENV PUBLISH "-"
-ENV DATA "-"
+ENV DATA1 "-"
+ENV DATA2 "-"
 
 ENTRYPOINT ["/etc/bootstrap.sh"]
 

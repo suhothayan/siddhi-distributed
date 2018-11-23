@@ -23,12 +23,14 @@ public class EventConsumer {
 
         String consume = "9895";
         String publish = "";
-        String data = "100000";
+        String data1 = "100000";
+        String data2 = "1";
         if (args.length != 0) {
-            if (args.length == 3) {
+            if (args.length == 4) {
                 consume = args[0];
                 publish = args[1];
-                data = args[2];
+                data1 = args[2];
+                data2 = args[3];
             } else {
                 throw new Error("More " + args.length + " arguments found expecting 2.");
             }

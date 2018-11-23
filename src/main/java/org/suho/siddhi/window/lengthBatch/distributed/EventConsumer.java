@@ -35,6 +35,23 @@ public class EventConsumer {
 
     public static void main(String[] args) throws InterruptedException {
 
+        System.out.println("Program Arguments:");
+        for (String arg : args) {
+            System.out.println("\t" + arg);
+        }
+
+        String consume = "9895";
+        String publish = "";
+        String data = "100000";
+        if (args.length != 0) {
+            if (args.length == 3) {
+                consume = args[0];
+                publish = args[1];
+                data = args[2];
+            } else {
+                throw new Error("More " + args.length + " arguments found expecting 2.");
+            }
+        }
 
         String siddhiApp = "" +
                 "@app:name('consumer')\n" +
@@ -44,7 +61,7 @@ public class EventConsumer {
 
         SiddhiManager siddhiManager = new SiddhiManager();
         Map<String, String> executionConfig = new HashMap<>();
-        executionConfig.put("source.tcp.port", "9895");
+        executionConfig.put("source.tcp.port", consume);
         siddhiManager.setConfigManager(new InMemoryConfigManager(executionConfig, null));
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
 

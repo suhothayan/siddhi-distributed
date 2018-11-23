@@ -162,7 +162,7 @@
     </repositories>
 
     <properties>
-        <siddhi.version>4.2.34</siddhi.version>
+        <siddhi.version>4.2.35-SNAPSHOT</siddhi.version>
         <siddhi.tcp.version>2.0.20</siddhi.tcp.version>
         <siddhi.map.binary.version>1.0.7</siddhi.map.binary.version>
         <siddhi.string.version>4.0.24</siddhi.string.version>

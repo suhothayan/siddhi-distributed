@@ -18,7 +18,7 @@ spec:
       - name: llength-window-publisher
         image: suhothayan/siddhitest:latest
         ports:
-        - containerPort: 9894
+        - containerPort: 80
         env:
         -
           name: MAIN_CLASS
@@ -28,7 +28,10 @@ spec:
           value: "-"
         -
           name: PUBLISH
-          value: "length-window-server1-service:9894,length-window-server2-service:9894,length-window-server3-service:9894"
+          value: "length-window-server1-service:80,length-window-server2-service:80"
         -
-          name: DATA
+          name: DATA1
+          value: "-"
+        -
+          name: DATA2
           value: "-"

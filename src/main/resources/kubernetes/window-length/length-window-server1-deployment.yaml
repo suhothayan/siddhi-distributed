@@ -18,20 +18,23 @@ spec:
       - name: llength-window-server1
         image: suhothayan/siddhitest:latest
         ports:
-        - containerPort: 9894
+        - containerPort: 80
         env:
         -
           name: MAIN_CLASS
           value: "org.suho.siddhi.window.length.distributed.LengthWindowServer"
         -
           name: CONSUME
-          value: "9894"
+          value: "80"
         -
           name: PUBLISH
-          value: "length-window-consumer-service:9895"
+          value: "length-window-unique-server-service:80"
         -
-          name: DATA
+          name: DATA1
           value: "100000"
+        -
+          name: DATA2
+          value: "1"
 ---
 kind: Service
 apiVersion: v1
@@ -42,5 +45,5 @@ spec:
     app: length-window-server1
   ports:
   - protocol: TCP
-    port: 9894
-    targetPort: 9894
+    port: 80
+    targetPort: 80

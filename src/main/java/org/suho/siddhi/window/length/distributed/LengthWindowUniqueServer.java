@@ -28,38 +28,46 @@ import java.util.Map;
 /**
  * Standalone window
  */
-public class LengthWindowServer3 {
+public class LengthWindowUniqueServer {
 
     public static void main(String[] args) throws InterruptedException {
-        String consume = "9883";
+
+        System.out.println("Program Arguments:");
+        for (String arg : args) {
+            System.out.println("\t" + arg);
+        }
+        Thread.sleep(3000);
+
+        String consume = "9893";
         String publish = "127.0.0.1:9895";
-        String data = "100000";
+        String data1 = "100000";
+        String data2 = "1";
         if (args.length != 0) {
-            if (args.length == 3) {
+            if (args.length == 4) {
                 consume = args[0];
                 publish = args[1];
-                data = args[2];
+                data1 = args[2];
+                data2 = args[3];
             } else {
                 throw new Error("More " + args.length + " arguments found expecting 2.");
             }
         }
-
 
         String siddhiApp = "" +
                 "@app:name('length-window')\n" +
                 "@app:statistics(reporter = 'console', interval = '5' ) \n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream StockEventStream (symbol string, price float, volume long, seqNo long);\n" +
+                "define stream PartialAggregateStockStream (symbol string, totalPrice double, totalVolume long, countVolume long, id string);\n" +
                 "\n" +
                 "@sink(type='tcp', url='tcp://" + publish + "/consumer/AggregateStockStream', sync='true', @map(type='binary')) \n" +
-                "define stream PartialAggregateStockStream (symbol string, totalPrice double, totalVolume long, countVolume long, id string);\n" +
+                "define stream AggregateStockStream (symbol string, totalPrice double, avgVolume double);\n" +
                 "                \n" +
                 "@info(name = 'query1') \n" +
-                "from StockEventStream#window.externalTime(seqNo, " + data +")  \n" +
-                "select symbol, sum(price) as totalPrice, sum(volume) as totalVolume, count(volume) as countVolume, '2' as id \n" +
+                "from PartialAggregateStockStream#window.unique:ever(id,symbol) \n" +
+                "select symbol, sum(totalPrice) as totalPrice, sum(totalVolume)*1.0/sum(countVolume) as avgVolume \n" +
                 "group by symbol \n" +
-                "insert into PartialAggregateStockStream ;\n";
+                "insert into AggregateStockStream ;\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();
         Map<String, String> executionConfig = new HashMap<>();
