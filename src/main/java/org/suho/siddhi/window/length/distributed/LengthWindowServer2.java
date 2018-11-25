@@ -52,7 +52,7 @@ public class LengthWindowServer2 {
         //Start SiddhiApp runtime
         siddhiAppRuntime.start();
 
-        Thread.sleep(1000000);
+        Thread.sleep(1000000000);
 
         //Shutdown SiddhiApp runtime
         siddhiAppRuntime.shutdown();

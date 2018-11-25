@@ -80,7 +80,7 @@ public class EventPublisher {
             inputHandler.send(new Object[]{"IBM", 100f, 100L, i});
         }
         System.out.println("published");
-        Thread.sleep(1000000);
+        Thread.sleep(1000000000);
 
         siddhiAppRuntime.shutdown();
     }
