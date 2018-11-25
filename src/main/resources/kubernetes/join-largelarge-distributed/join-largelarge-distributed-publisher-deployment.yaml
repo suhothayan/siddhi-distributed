@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: join-largelarge-distributed-publisher-deployment
+  labels:
+    app: join-largelarge-distributed-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: join-largelarge-distributed-publisher
+  template:
+    metadata:
+      labels:
+        app: join-largelarge-distributed-publisher
+    spec:
+      containers:
+      - name: llength-window-publisher
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.join.largelarge.distributed.EventPublisher"
+        -
+          name: CONSUME
+          value: "join-largelarge-distributed-server1-service:80,join-largelarge-distributed-server2-service:80"
+        -
+          name: PUBLISH
+          value: "join-largelarge-distributed-server3-service:80,join-largelarge-distributed-server4-service:80"
+        -
+          name: DATA1
+          value: "join-largelarge-distributed-server1-service:80,join-largelarge-distributed-server3-service:80"
+        -
+          name: DATA2
+          value: "join-largelarge-distributed-server2-service:80,join-largelarge-distributed-server4-service:80"

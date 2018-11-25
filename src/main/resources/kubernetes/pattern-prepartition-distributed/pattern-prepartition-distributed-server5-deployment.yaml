@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pattern-prepartition-distributed-server5-deployment
+  labels:
+    app: pattern-prepartition-distributed-server5
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pattern-prepartition-distributed-server5
+  template:
+    metadata:
+      labels:
+        app: pattern-prepartition-distributed-server5
+    spec:
+      containers:
+      - name: llength-window-server5
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.pattern.distributed.prepartition.PatternServer5"
+        -
+          name: CONSUME
+          value: "80"
+        -
+          name: PUBLISH
+          value: "pattern-prepartition-distributed-consumer-service:80"
+        -
+          name: DATA1
+          value: "1 min"
+        -
+          name: DATA2
+          value: "60000"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: pattern-prepartition-distributed-server5-service
+spec:
+  selector:
+    app: pattern-prepartition-distributed-server5
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

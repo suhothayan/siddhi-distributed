@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: join-largelarge-distributed-consumer-deployment
+  labels:
+    app: join-largelarge-distributed-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: join-largelarge-distributed-consumer
+  template:
+    metadata:
+      labels:
+        app: join-largelarge-distributed-consumer
+    spec:
+      containers:
+      - name: join-largelarge-distributed-consumer
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.join.largelarge.distributed.EventConsumer"
+        -
+          name: CONSUME
+          value: "80"
+        -
+          name: PUBLISH
+          value: "-"
+        -
+          name: DATA1
+          value: "-"
+        -
+          name: DATA2
+          value: "-"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: join-largelarge-distributed-consumer-service
+spec:
+  selector:
+    app: join-largelarge-distributed-consumer
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

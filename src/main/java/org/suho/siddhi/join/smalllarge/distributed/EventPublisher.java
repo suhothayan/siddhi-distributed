@@ -22,25 +22,59 @@ import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 
+import java.util.ArrayList;
+
 /**
  * Created by suho on 9/14/17.
  */
 public class EventPublisher {
     public static void main(String[] args) throws InterruptedException {
 
+        System.out.println("Program Arguments:");
+        for (String arg : args) {
+            System.out.println("\t" + arg);
+        }
+        Thread.sleep(9000);
+
+        String consume = "-";
+        String publish = "127.0.0.1:9881,127.0.0.1:9882";
+        String data1 = "-";
+        String data2 = "-";
+        if (args.length != 0) {
+            if (args.length == 4) {
+                consume = args[0];
+                publish = args[1];
+                data1 = args[2];
+                data2 = args[3];
+            } else {
+                throw new Error("More " + args.length + " arguments found expecting 4.");
+            }
+        }
+        String[] publishUrls = publish.split(",");
+        ArrayList<String> destinationList = new ArrayList<>();
+        for (String url : publishUrls) {
+            destinationList.add("@destination(url='tcp://" + url.trim() + "/join/StreamA')");
+        }
+        String destinations1 = String.join(",", destinationList);
+
+        publishUrls = publish.split(",");
+        destinationList = new ArrayList<>();
+        for (String url : publishUrls) {
+            destinationList.add("@destination(url='tcp://" + url.trim() + "/join/StreamB')");
+        }
+        String destinations2 = String.join(",", destinationList);
+
         String siddhiApp = "" +
                 "@app:name('publisher')\n" +
                 "\n" +
                 "@sink(type='tcp', sync='true', @map(type='binary'), " +
                 "   @distribution(strategy='roundRobin', " +
-                "       @destination(url='tcp://127.0.0.1:9881/join/StreamA')," +
-                "       @destination(url='tcp://127.0.0.1:9882/join/StreamA'))) \n" +
+                "       " + destinations1 + ")) \n" +
                 "define stream StreamA (symbol string, price float, volume long, seqNo long);\n" +
                 "\n" +
                 "@sink(type='tcp', sync='true', @map(type='binary'), " +
                 "   @distribution(strategy='broadcast', " +
-                "       @destination(url='tcp://127.0.0.1:9881/join/StreamB')," +
-                "       @destination(url='tcp://127.0.0.1:9882/join/StreamB'))) \n" +
+                "       " + destinations2 + ")) \n" +
                 "define stream StreamB (symbol string, price float, volume long, seqNo long);\n" +
                 "";
         SiddhiManager siddhiManager = new SiddhiManager();

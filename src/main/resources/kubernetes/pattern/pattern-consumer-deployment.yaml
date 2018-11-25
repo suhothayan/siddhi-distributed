@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pattern-consumer-deployment
+  labels:
+    app: pattern-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pattern-consumer
+  template:
+    metadata:
+      labels:
+        app: pattern-consumer
+    spec:
+      containers:
+      - name: pattern-consumer
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.pattern.EventConsumer"
+        -
+          name: CONSUME
+          value: "80"
+        -
+          name: PUBLISH
+          value: "-"
+        -
+          name: DATA1
+          value: "-"
+        -
+          name: DATA2
+          value: "-"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: pattern-consumer-service
+spec:
+  selector:
+    app: pattern-consumer
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

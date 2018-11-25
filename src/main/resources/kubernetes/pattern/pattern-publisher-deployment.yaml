@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pattern-publisher-deployment
+  labels:
+    app: pattern-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pattern-publisher
+  template:
+    metadata:
+      labels:
+        app: pattern-publisher
+    spec:
+      containers:
+      - name: llength-window-publisher
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.pattern.EventPublisher"
+        -
+          name: CONSUME
+          value: "-"
+        -
+          name: PUBLISH
+          value: "pattern-server-service:80"
+        -
+          name: DATA1
+          value: "-"
+        -
+          name: DATA2
+          value: "-"

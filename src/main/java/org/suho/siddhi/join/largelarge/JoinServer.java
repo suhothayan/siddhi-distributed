@@ -20,6 +20,10 @@ package org.suho.siddhi.join.largelarge;
 
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
+import org.wso2.siddhi.core.util.config.InMemoryConfigManager;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Standalone length
@@ -28,6 +32,25 @@ public class JoinServer {
 
     public static void main(String[] args) throws InterruptedException {
 
+        System.out.println("Program Arguments:");
+        for (String arg : args) {
+            System.out.println("\t" + arg);
+        }
+
+        String consume = "9892";
+        String publish = "127.0.0.1:9895";
+        String data1 = "10000";
+        String data2 = "10000";
+        if (args.length != 0) {
+            if (args.length == 4) {
+                consume = args[0];
+                publish = args[1];
+                data1 = args[2];
+                data2 = args[3];
+            } else {
+                throw new Error("More " + args.length + " arguments found expecting 4.");
+            }
+        }
 
         String siddhiApp = "" +
                 "@app:name('join')\n" +
@@ -39,18 +62,21 @@ public class JoinServer {
                 "@source(type='tcp', @map(type='binary')) \n" +
                 "define stream StreamB (symbol string, price float, volume long);\n" +
                 "\n" +
-                "@sink(type='tcp', url='tcp://127.0.0.1:9895/consumer/OutputStream', sync='true', @map(type='binary')) \n" +
+                "@sink(type='tcp', url='tcp://" + publish + "/consumer/OutputStream', sync='true', @map(type='binary')) \n" +
                 "define stream OutputStream (sumPrice double, countEvents long, avgPrice double);\n" +
                 "                \n" +
                 "@info(name = 'query1') \n" +
-                "from StreamA#window.length(10000) join \n" +
-                "   StreamB#window.length(10000)\n" +
+                "from StreamA#window.length(" + data1 + ") join \n" +
+                "   StreamB#window.length(" + data2 + ")\n" +
                 "   on StreamA.symbol == StreamB.symbol\n" +
                 "select sum(StreamA.price) as sumPrice, count() as countEvents, \n" +
                 "   avg(StreamB.price) as avgPrice\n" +
                 "insert into OutputStream;\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();
+        Map<String, String> executionConfig = new HashMap<>();
+        executionConfig.put("source.tcp.port", consume);
+        siddhiManager.setConfigManager(new InMemoryConfigManager(executionConfig, null));
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
 
         //Start SiddhiApp runtime

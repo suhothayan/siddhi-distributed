@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: join-smalllarge-server-deployment
+  labels:
+    app: join-smalllarge-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: join-smalllarge-server
+  template:
+    metadata:
+      labels:
+        app: join-smalllarge-server
+    spec:
+      containers:
+      - name: llength-window-server
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.join.smalllarge.JoinServer"
+        -
+          name: CONSUME
+          value: "80"
+        -
+          name: PUBLISH
+          value: "join-smalllarge-consumer-service:80"
+        -
+          name: DATA1
+          value: "10000"
+        -
+          name: DATA2
+          value: "150"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: join-smalllarge-server-service
+spec:
+  selector:
+    app: join-smalllarge-server
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

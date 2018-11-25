@@ -28,10 +28,31 @@ import java.util.Map;
 /**
  * Standalone window
  */
-public class JoinServer5 {
+public class JoinUniqueServer {
 
     public static void main(String[] args) throws InterruptedException {
 
+        System.out.println("Program Arguments:");
+        for (String arg : args) {
+            System.out.println("\t" + arg);
+        }
+
+        String consume = "9885";
+        String publish = "127.0.0.1:9895";
+        String data1 = "-";
+        String data2 = "-";
+        if (args.length != 0) {
+            if (args.length == 4) {
+                consume = args[0];
+                publish = args[1];
+                data1 = args[2];
+                data2 = args[3];
+            } else {
+                throw new Error("More " + args.length + " arguments found expecting 4.");
+            }
+        }
+
+        String[] windowSizes = data1.split(",");
 
         String siddhiApp = "" +
                 "@app:name('join')\n" +
@@ -40,7 +61,7 @@ public class JoinServer5 {
                 "@source(type='tcp', @map(type='binary')) \n" +
                 "define stream PartialOutputStream (sumPriceA double, countEvents long, sumPriceB double, id string);\n" +
                 "\n" +
-                "@sink(type='tcp', url='tcp://127.0.0.1:9895/consumer/OutputStream', sync='true', @map(type='binary')) \n" +
+                "@sink(type='tcp', url='tcp://" + publish + "/consumer/OutputStream', sync='true', @map(type='binary')) \n" +
                 "define stream OutputStream (sumPrice double, countEvents long, avgPrice double);\n" +
                 "                \n" +
                 "@info(name = 'query1') \n" +
@@ -50,7 +71,7 @@ public class JoinServer5 {
 
         SiddhiManager siddhiManager = new SiddhiManager();
         Map<String, String> executionConfig = new HashMap<>();
-        executionConfig.put("source.tcp.port", "9885");
+        executionConfig.put("source.tcp.port", consume);
         siddhiManager.setConfigManager(new InMemoryConfigManager(executionConfig, null));
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
 

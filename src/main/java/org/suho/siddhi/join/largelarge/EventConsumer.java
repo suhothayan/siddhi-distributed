@@ -34,6 +34,25 @@ public class EventConsumer {
 
     public static void main(String[] args) throws InterruptedException {
 
+        System.out.println("Program Arguments:");
+        for (String arg : args) {
+            System.out.println("\t" + arg);
+        }
+
+        String consume = "9895";
+        String publish = "-";
+        String data1 = "-";
+        String data2 = "-";
+        if (args.length != 0) {
+            if (args.length == 4) {
+                consume = args[0];
+                publish = args[1];
+                data1 = args[2];
+                data2 = args[3];
+            } else {
+                throw new Error("More " + args.length + " arguments found expecting 4.");
+            }
+        }
 
         String siddhiApp = "" +
                 "@app:name('consumer')\n" +
@@ -44,13 +63,13 @@ public class EventConsumer {
 
         SiddhiManager siddhiManager = new SiddhiManager();
         Map<String, String> executionConfig = new HashMap<>();
-        executionConfig.put("source.tcp.port", "9895");
+        executionConfig.put("source.tcp.port", consume);
         siddhiManager.setConfigManager(new InMemoryConfigManager(executionConfig, null));
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
 
         siddhiAppRuntime.addCallback("OutputStream", new StreamCallback() {
             public int eventCount = 0;
-//            public int timeSpent = 0;
+            //            public int timeSpent = 0;
             long startTime = System.currentTimeMillis();
 
             @Override
@@ -59,7 +78,7 @@ public class EventConsumer {
                     eventCount++;
 //                    timeSpent += (System.currentTimeMillis() - (Long) event.getData(3));
                     if (eventCount % 10000 == 0) {
-                        System.out.println("Throughput : " + (eventCount * 1000) / ((System.currentTimeMillis()) -
+                        System.out.println((eventCount * 1000) / ((System.currentTimeMillis()) -
                                 startTime));
 //                        System.out.println("Time spent :  " + (timeSpent * 1.0 / eventCount));
                         startTime = System.currentTimeMillis();

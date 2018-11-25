@@ -30,10 +30,31 @@ import java.util.Random;
 public class EventPublisher {
     public static void main(String[] args) throws InterruptedException {
 
+        System.out.println("Program Arguments:");
+        for (String arg : args) {
+            System.out.println("\t" + arg);
+        }
+
+        String consume = "-";
+        String publish = "127.0.0.1:9892";
+        String data1 = "-";
+        String data2 = "-";
+        if (args.length != 0) {
+            if (args.length == 4) {
+                consume = args[0];
+                publish = args[1];
+                data1 = args[2];
+                data2 = args[3];
+            } else {
+                throw new Error("More " + args.length + " arguments found expecting 4.");
+            }
+        }
+
+
         String siddhiApp = "" +
                 "@app:name('publisher')\n" +
                 "\n" +
-                "@sink(type='tcp', url='tcp://127.0.0.1:9892/pattern/CardStream', sync='true', @map(type='binary')) \n" +
+                "@sink(type='tcp', url='tcp://" + publish + "/pattern/CardStream', sync='true', @map(type='binary')) \n" +
                 "define stream CardStream (cardId string, amount float, location string);\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();
@@ -44,12 +65,12 @@ public class EventPublisher {
         //Start SiddhiApp runtime
         siddhiAppRuntime.start();
 
-        long eventsToPublish= 100000000;
+        long eventsToPublish = 100000000;
 //        long eventsToPublish = 2;
         //Sending events to Siddhi
         Random random = new Random();
         for (int i = 0; i < eventsToPublish; i++) {
-            inputHandler.send(new Object[]{"1234", random.nextInt(200)*1.0f, "SL"});
+            inputHandler.send(new Object[]{"1234", random.nextInt(200) * 1.0f, "SL"});
         }
         System.out.println("published");
         Thread.sleep(1000000);

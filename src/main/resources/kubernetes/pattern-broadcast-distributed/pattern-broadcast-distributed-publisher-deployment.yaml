@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pattern-broadcast-distributed-publisher-deployment
+  labels:
+    app: pattern-broadcast-distributed-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pattern-broadcast-distributed-publisher
+  template:
+    metadata:
+      labels:
+        app: pattern-broadcast-distributed-publisher
+    spec:
+      containers:
+      - name: llength-window-publisher
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.pattern.distributed.broadcast.EventPublisher"
+        -
+          name: CONSUME
+          value: "-"
+        -
+          name: PUBLISH
+          value: "pattern-broadcast-distributed-server1-service:80,pattern-broadcast-distributed-server2-service:80,pattern-broadcast-distributed-server3-service:80"
+        -
+          name: DATA1
+          value: "-"
+        -
+          name: DATA2
+          value: "-"

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: join-largelarge-distributed-server1-deployment
+  labels:
+    app: join-largelarge-distributed-server1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: join-largelarge-distributed-server1
+  template:
+    metadata:
+      labels:
+        app: join-largelarge-distributed-server1
+    spec:
+      containers:
+      - name: llength-window-server1
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.join.largelarge.distributed.JoinServer1"
+        -
+          name: CONSUME
+          value: "80"
+        -
+          name: PUBLISH
+          value: "join-largelarge-distributed-unique-server-service:80"
+        -
+          name: DATA1
+          value: "10000,10000"
+        -
+          name: DATA2
+          value: "1"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: join-largelarge-distributed-server1-service
+spec:
+  selector:
+    app: join-largelarge-distributed-server1
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

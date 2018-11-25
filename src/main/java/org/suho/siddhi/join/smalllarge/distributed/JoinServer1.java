@@ -32,6 +32,28 @@ public class JoinServer1 {
 
     public static void main(String[] args) throws InterruptedException {
 
+        System.out.println("Program Arguments:");
+        for (String arg : args) {
+            System.out.println("\t" + arg);
+        }
+        Thread.sleep(6000);
+
+        String consume = "9881";
+        String publish = "127.0.0.1:9883";
+        String data1 = "10000,150";
+        String data2 = "1";
+        if (args.length != 0) {
+            if (args.length == 4) {
+                consume = args[0];
+                publish = args[1];
+                data1 = args[2];
+                data2 = args[3];
+            } else {
+                throw new Error("More " + args.length + " arguments found expecting 4.");
+            }
+        }
+
+        String[] windowSizes = data1.split(",");
 
         String siddhiApp = "" +
                 "@app:name('join')\n" +
@@ -43,21 +65,21 @@ public class JoinServer1 {
                 "@source(type='tcp', @map(type='binary')) \n" +
                 "define stream StreamB (symbol string, price float, volume long, seqNo long);\n" +
                 "\n" +
-                "@sink(type='tcp', url='tcp://127.0.0.1:9883/join/PartialOutputStream', sync='true', @map(type='binary')) \n" +
+                "@sink(type='tcp', url='tcp://" + publish + "/join/PartialOutputStream', sync='true', @map(type='binary')) \n" +
                 "define stream PartialOutputStream (sumPriceA double, countEvents long, sumPriceB double, id string);\n" +
                 "                \n" +
                 "@info(name = 'query1') \n" +
-                "from StreamA#window.externalTime(seqNo, 10000) join \n" +
-                "   StreamB#window.length(150)\n" +
+                "from StreamA#window.externalTime(seqNo, " + windowSizes[0] + ") join \n" +
+                "   StreamB#window.length(" + windowSizes[1] + ")\n" +
                 "   on StreamA.symbol == StreamB.symbol\n" +
                 "select sum(StreamA.price) as sumPriceA, count() as countEvents, \n" +
-                "   sum(StreamB.price) as sumPriceB, '1' as id  \n" +
+                "   sum(StreamB.price) as sumPriceB, '" + data2 + "' as id  \n" +
                 "insert into PartialOutputStream;\n" +
                 "";
 
         SiddhiManager siddhiManager = new SiddhiManager();
         Map<String, String> executionConfig = new HashMap<>();
-        executionConfig.put("source.tcp.port", "9881");
+        executionConfig.put("source.tcp.port", consume);
         siddhiManager.setConfigManager(new InMemoryConfigManager(executionConfig, null));
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
 

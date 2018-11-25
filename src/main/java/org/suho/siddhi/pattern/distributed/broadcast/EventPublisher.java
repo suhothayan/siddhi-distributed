@@ -22,6 +22,7 @@ import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -30,14 +31,39 @@ import java.util.Random;
 public class EventPublisher {
     public static void main(String[] args) throws InterruptedException {
 
+        System.out.println("Program Arguments:");
+        for (String arg : args) {
+            System.out.println("\t" + arg);
+        }
+        Thread.sleep(9000);
+
+        String consume = "-";
+        String publish = "127.0.0.1:9881,127.0.0.1:9882,127.0.0.1:9883";
+        String data1 = "-";
+        String data2 = "-";
+        if (args.length != 0) {
+            if (args.length == 4) {
+                consume = args[0];
+                publish = args[1];
+                data1 = args[2];
+                data2 = args[3];
+            } else {
+                throw new Error("More " + args.length + " arguments found expecting 4.");
+            }
+        }
+        String[] publishUrls = publish.split(",");
+        ArrayList<String> destinationList = new ArrayList<>();
+        for (String url : publishUrls) {
+            destinationList.add("@destination(url='tcp://" + url.trim() + "/pattern/CardStream')");
+        }
+        String destinations1 = String.join(",", destinationList);
+
         String siddhiApp = "" +
                 "@app:name('publisher')\n" +
                 "\n" +
                 "@sink(type='tcp', sync='true', @map(type='binary'), " +
                 "   @distribution(strategy='broadcast', " +
-                "       @destination(url='tcp://127.0.0.1:9881/pattern/CardStream')," +
-                "       @destination(url='tcp://127.0.0.1:9882/pattern/CardStream')," +
-                "       @destination(url='tcp://127.0.0.1:9883/pattern/CardStream'))) \n" +
+                "       " + destinations1 + ")) \n" +
                 "define stream CardStream (cardId string, amount float, location string);\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();
@@ -53,7 +79,7 @@ public class EventPublisher {
         //Sending events to Siddhi
         Random random = new Random();
         for (int i = 0; i < eventsToPublish; i++) {
-            inputHandler.send(new Object[]{"1234", random.nextInt(2000)*1.0f, "SL"});
+            inputHandler.send(new Object[]{"1234", random.nextInt(2000) * 1.0f, "SL"});
         }
         System.out.println("published");
         Thread.sleep(1000000);

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: join-smalllarge-consumer-deployment
+  labels:
+    app: join-smalllarge-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: join-smalllarge-consumer
+  template:
+    metadata:
+      labels:
+        app: join-smalllarge-consumer
+    spec:
+      containers:
+      - name: join-smalllarge-consumer
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.join.smalllarge.EventConsumer"
+        -
+          name: CONSUME
+          value: "80"
+        -
+          name: PUBLISH
+          value: "-"
+        -
+          name: DATA1
+          value: "-"
+        -
+          name: DATA2
+          value: "-"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: join-smalllarge-consumer-service
+spec:
+  selector:
+    app: join-smalllarge-consumer
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

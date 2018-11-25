@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: join-smalllarge-publisher-deployment
+  labels:
+    app: join-smalllarge-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: join-smalllarge-publisher
+  template:
+    metadata:
+      labels:
+        app: join-smalllarge-publisher
+    spec:
+      containers:
+      - name: llength-window-publisher
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.join.smalllarge.EventPublisher"
+        -
+          name: CONSUME
+          value: "-"
+        -
+          name: PUBLISH
+          value: "join-smalllarge-server-service:80"
+        -
+          name: DATA1
+          value: "-"
+        -
+          name: DATA2
+          value: "-"

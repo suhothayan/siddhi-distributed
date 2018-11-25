@@ -22,6 +22,7 @@ import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -30,28 +31,72 @@ import java.util.Random;
 public class EventPublisher {
     public static void main(String[] args) throws InterruptedException {
 
+        System.out.println("Program Arguments:");
+        for (String arg : args) {
+            System.out.println("\t" + arg);
+        }
+        Thread.sleep(9000);
+
+        String consume = "-";
+        String publish = "127.0.0.1:9881,127.0.0.1:9882";
+        String data1 = "127.0.0.1:9883,127.0.0.1:9884";
+        String data2 = "127.0.0.1:9885";
+        if (args.length != 0) {
+            if (args.length == 4) {
+                consume = args[0];
+                publish = args[1];
+                data1 = args[2];
+                data2 = args[3];
+            } else {
+                throw new Error("More " + args.length + " arguments found expecting 4.");
+            }
+        }
+        String[] publishUrls = publish.split(",");
+        ArrayList<String> destinationList = new ArrayList<>();
+        for (String url : publishUrls) {
+            destinationList.add("@destination(url='tcp://" + url.trim() + "/pattern/CardStreamS')");
+        }
+        String destinations1 = String.join(",", destinationList);
+
+        publishUrls = data1.split(",");
+        destinationList = new ArrayList<>();
+        for (String url : publishUrls) {
+            destinationList.add("@destination(url='tcp://" + url.trim() + "/pattern/CardStreamS')");
+        }
+        String destinations2 = String.join(",", destinationList);
+
+        publishUrls = data2.split(",");
+        destinationList = new ArrayList<>();
+        for (String url : publishUrls) {
+            destinationList.add("@destination(url='tcp://" + url.trim() + "/pattern/CardStreamL')");
+        }
+        String destinations3 = String.join(",", destinationList);
+
         String siddhiApp = "" +
                 "@app:name('publisher')\n" +
                 "\n" +
                 "define stream CardStream (cardId string, amount float, location string);\n" +
                 "" +
                 "@sink(type='tcp', sync='true', @map(type='binary'), " +
-                "   @distribution(strategy='broadcast', " +
-                "       @destination(url='tcp://127.0.0.1:9883/pattern/CardStreamS')," +
-                "       @destination(url='tcp://127.0.0.1:9884/pattern/CardStreamS'))) \n" +
-                "@sink(type='tcp', sync='true', @map(type='binary'), " +
                 "   @distribution(strategy='roundRobin', " +
-                "       @destination(url='tcp://127.0.0.1:9881/pattern/CardStreamS')," +
-                "       @destination(url='tcp://127.0.0.1:9882/pattern/CardStreamS'))) \n" +
-                "define stream CardStreamS (cardId string, amount float, location string);" +
+                "       " + destinations1 + ")) \n" +
+                "define stream CardStreamS1 (cardId string, amount float, location string);" +
+                "" +
+                "@sink(type='tcp', sync='true', @map(type='binary'), " +
+                "   @distribution(strategy='broadcast', " +
+                "       " + destinations2 + ")) \n" +
+                "define stream CardStreamS2 (cardId string, amount float, location string);" +
                 "" +
                 "@sink(type='tcp', sync='true', @map(type='binary'), " +
                 "   @distribution(strategy='roundRobin', " +
-                "       @destination(url='tcp://127.0.0.1:9885/pattern/CardStreamL'))) \n" +
+                "       " + destinations3 + ")) \n" +
                 "define stream CardStreamL (cardId string, amount float, location string);" +
                 "" +
                 "from CardStream[amount < 100]" +
-                "insert into CardStreamS;" +
+                "insert into CardStreamS1;" +
+                "" +
+                "from CardStream[amount < 100]" +
+                "insert into CardStreamS2;" +
                 "" +
                 "from CardStream[amount > 100]" +
                 "insert into CardStreamL;" +
@@ -70,7 +115,7 @@ public class EventPublisher {
         //Sending events to Siddhi
         Random random = new Random();
         for (int i = 0; i < eventsToPublish; i++) {
-            inputHandler.send(new Object[]{"1234", random.nextInt(110)*1.0f, "SL"});
+            inputHandler.send(new Object[]{"1234", random.nextInt(110) * 1.0f, "SL"});
         }
 
 //        inputHandler.send(new Object[]{"1234", 5f, "SL"});
