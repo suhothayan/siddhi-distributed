@@ -15,7 +15,7 @@ spec:
         app: length-window-distributed-publisher
     spec:
       containers:
-      - name: llength-window-publisher
+      - name: length-window-publisher
         image: suhothayan/siddhitest:latest
         ports:
         - containerPort: 80

@@ -15,7 +15,7 @@ spec:
         app: time-window-publisher
     spec:
       containers:
-      - name: llength-window-publisher
+      - name: time-window-publisher
         image: suhothayan/siddhitest:latest
         ports:
         - containerPort: 80
@@ -35,7 +35,7 @@ spec:
           value: "-"
         -
           name: PUBLISH
-          value: "time-window-consumer-service:80"
+          value: "time-window-server-service:80"
         -
           name: DATA1
           value: "-"

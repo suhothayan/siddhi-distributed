@@ -15,7 +15,7 @@ spec:
         app: length-window-server
     spec:
       containers:
-      - name: llength-window-server
+      - name: length-window-server
         image: suhothayan/siddhitest:latest
         ports:
         - containerPort: 80

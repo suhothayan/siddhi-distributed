@@ -15,7 +15,7 @@ spec:
         app: time-window-distributed-publisher
     spec:
       containers:
-      - name: llength-window-publisher
+      - name: time-window-publisher
         image: suhothayan/siddhitest:latest
         imagePullPolicy: IfNotPresent
         ports:
