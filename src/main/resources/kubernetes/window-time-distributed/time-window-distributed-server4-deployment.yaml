@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: time-window-distributed-consumer-deployment
+  name: time-window-distributed-server4-deployment
   labels:
-    app: time-window-distributed-consumer
+    app: time-window-distributed-server4
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: time-window-distributed-consumer
+      app: time-window-distributed-server4
   template:
     metadata:
       labels:
-        app: time-window-distributed-consumer
+        app: time-window-distributed-server4
     spec:
       containers:
-      - name: time-window-distributed-consumer
+      - name: time-window-server4
         image: suhothayan/siddhitest:latest
         terminationMessagePolicy: FallbackToLogsOnError
         ports:
@@ -30,27 +30,28 @@ spec:
         env:
         -
           name: MAIN_CLASS
-          value: "org.suho.siddhi.window.time.distributed.EventConsumer"
+          value: "org.suho.siddhi.window.time.distributed.TimeWindowServer1"
         -
           name: CONSUME
           value: "80"
         -
           name: PUBLISH
-          value: "-"
+          value: "time-window-distributed-unique-server-service:80"
         -
           name: DATA1
-          value: "-"
+          value: "4 min"
         -
           name: DATA2
-          value: "-"
+          value: "4"
+
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: time-window-distributed-consumer-service
+  name: time-window-distributed-server4-service
 spec:
   selector:
-    app: time-window-distributed-consumer
+    app: time-window-distributed-server4
   ports:
   - protocol: TCP
     port: 80

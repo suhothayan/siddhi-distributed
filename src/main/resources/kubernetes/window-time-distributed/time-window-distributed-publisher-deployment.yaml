@@ -17,7 +17,7 @@ spec:
       containers:
       - name: time-window-publisher
         image: suhothayan/siddhitest:latest
-        imagePullPolicy: IfNotPresent
+        terminationMessagePolicy: FallbackToLogsOnError
         ports:
         - containerPort: 80
         resources:
@@ -36,7 +36,7 @@ spec:
           value: "-"
         -
           name: PUBLISH
-          value: "time-window-distributed-server1-service:80,time-window-distributed-server2-service:80"
+          value: "time-window-distributed-server1-service:80,time-window-distributed-server2-service:80,time-window-distributed-server3-service:80,time-window-distributed-server4-service:80,time-window-distributed-server5-service:80,time-window-distributed-server6-service:80,time-window-distributed-server7-service:80,time-window-distributed-server8-service:80"
         -
           name: DATA1
           value: "-"

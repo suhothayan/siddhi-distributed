@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: time-window-distributed-server4-deployment
+  name: time-window-distributed-server6-deployment
   labels:
-    app: time-window-distributed-server4
+    app: time-window-distributed-server6
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: time-window-distributed-server4
+      app: time-window-distributed-server6
   template:
     metadata:
       labels:
-        app: time-window-distributed-server4
+        app: time-window-distributed-server6
     spec:
       containers:
-      - name: time-window-server4
+      - name: time-window-server6
         image: suhothayan/siddhitest:latest
-        imagePullPolicy: IfNotPresent
+        terminationMessagePolicy: FallbackToLogsOnError
         ports:
         - containerPort: 80
         resources:
@@ -39,19 +39,19 @@ spec:
           value: "time-window-distributed-unique-server-service:80"
         -
           name: DATA1
-          value: "2 min"
+          value: "4 min"
         -
           name: DATA2
-          value: "4"
+          value: "6"
 
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: time-window-distributed-server4-service
+  name: time-window-distributed-server6-service
 spec:
   selector:
-    app: time-window-distributed-server4
+    app: time-window-distributed-server6
   ports:
   - protocol: TCP
     port: 80

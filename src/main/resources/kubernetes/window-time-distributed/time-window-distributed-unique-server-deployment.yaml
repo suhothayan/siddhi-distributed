@@ -17,7 +17,7 @@ spec:
       containers:
       - name: time-window-unique-server
         image: suhothayan/siddhitest:latest
-        imagePullPolicy: IfNotPresent
+        terminationMessagePolicy: FallbackToLogsOnError
         ports:
         - containerPort: 80
         resources:

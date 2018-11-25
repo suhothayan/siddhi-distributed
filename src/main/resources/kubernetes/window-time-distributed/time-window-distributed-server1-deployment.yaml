@@ -17,7 +17,7 @@ spec:
       containers:
       - name: time-window-server1
         image: suhothayan/siddhitest:latest
-        imagePullPolicy: IfNotPresent
+        terminationMessagePolicy: FallbackToLogsOnError
         ports:
         - containerPort: 80
         resources:
@@ -39,7 +39,7 @@ spec:
           value: "time-window-distributed-unique-server-service:80"
         -
           name: DATA1
-          value: "2 min"
+          value: "4 min"
         -
           name: DATA2
           value: "1"
