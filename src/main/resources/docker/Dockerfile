@@ -20,6 +20,7 @@ ENV CONSUME "-"
 ENV PUBLISH "-"
 ENV DATA1 "-"
 ENV DATA2 "-"
+ENV JAVA_OPPS ""
 
 ENTRYPOINT ["/etc/bootstrap.sh"]
 

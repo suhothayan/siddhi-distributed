@@ -15,7 +15,7 @@ spec:
         app: pattern-prepartition-distributed-publisher
     spec:
       containers:
-      - name: llength-window-publisher
+      - name: pattern-prepartition-distributed-publisher
         image: suhothayan/siddhitest:latest
         ports:
         - containerPort: 80

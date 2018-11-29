@@ -15,10 +15,17 @@ spec:
         app: time-batch-window-distributed-unique-server
     spec:
       containers:
-      - name: llength-window-unique-server
+      - name: time-batch-window-unique-server
         image: suhothayan/siddhitest:latest
         ports:
         - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
         env:
         -
           name: MAIN_CLASS
@@ -31,7 +38,7 @@ spec:
           value: "time-batch-window-distributed-consumer-service:80"
         -
           name: DATA1
-          value: "2"
+          value: "4"
         -
           name: DATA2
           value: "-"

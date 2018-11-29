@@ -67,7 +67,7 @@ public class EventConsumer {
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
 
         siddhiAppRuntime.addCallback("PossibleFraudStream", new StreamCallback() {
-            public int eventCount = 0;
+            public volatile int eventCount = 0;
             //            public int timeSpent = 0;
             long startTime = System.currentTimeMillis();
 
@@ -76,7 +76,7 @@ public class EventConsumer {
                 for (Event event : events) {
                     eventCount++;
 //                    timeSpent += (System.currentTimeMillis() - (Long) event.getData(3));
-                    if (eventCount % 10000 == 0) {
+                    if (eventCount % 1000 == 0) {
                         System.out.println((eventCount * 1000) / ((System.currentTimeMillis()) -
                                 startTime));
 //                        System.out.println("Time spent :  " + (timeSpent * 1.0 / eventCount));

@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: length-batch-window-distributed-server4-deployment
+  labels:
+    app: length-batch-window-distributed-server4
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: length-batch-window-distributed-server4
+  template:
+    metadata:
+      labels:
+        app: length-batch-window-distributed-server4
+    spec:
+      containers:
+      - name: length-batch-window-server4
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.window.lengthBatch.distributed.LengthBatchWindowServer1"
+        -
+          name: CONSUME
+          value: "80"
+        -
+          name: PUBLISH
+          value: "length-batch-window-distributed-unique-server-service:80"
+        -
+          name: DATA1
+          value: "200000"
+        -
+          name: DATA2
+          value: "4"
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: length-batch-window-distributed-server4-service
+spec:
+  selector:
+    app: length-batch-window-distributed-server4
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

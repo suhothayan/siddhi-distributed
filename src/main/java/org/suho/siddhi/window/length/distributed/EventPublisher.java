@@ -16,7 +16,7 @@ public class EventPublisher {
         for (String arg : args) {
             System.out.println("\t" + arg);
         }
-        Thread.sleep(9000);
+        Thread.sleep(10000);
 
         String consume = "-";
         String publish = "127.0.0.1:9881,127.0.0.1:9882";
@@ -44,7 +44,7 @@ public class EventPublisher {
                 "\n" +
                 "@sink(type='tcp', sync='true', @map(type='binary'), " +
                 "   @distribution(strategy='roundRobin', " +
-                "       "+destinations+")) \n" +
+                "       " + destinations + ")) \n" +
                 "define stream StockEventStream (symbol string, price float, volume long, seqNo long);\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();
@@ -61,8 +61,8 @@ public class EventPublisher {
         long startTimeStats = startTime;
 
         //Sending events to Siddhi
-        for (int i = 0; i < eventsToPublish; i++) {
-            inputHandler.send(new Object[]{"IBM", 100f, 100L});
+        for (long i = 0; i < eventsToPublish; i++) {
+            inputHandler.send(new Object[]{"IBM", 100f, 100L, i});
             eventCount++;
             if (eventCount % 2 == 0) {
                 Thread.sleep(1);

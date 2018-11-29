@@ -111,16 +111,44 @@ public class EventPublisher {
         siddhiAppRuntime.start();
 
         long eventsToPublish = 100000000;
-//        long eventsToPublish = 2;
-        //Sending events to Siddhi
+        int eventCount = 0;
+        long startTime = System.currentTimeMillis();
+        long startTimeStats = startTime;
         Random random = new Random();
+
+        //Sending events to Siddhi
         for (int i = 0; i < eventsToPublish; i++) {
-            inputHandler.send(new Object[]{"1234", random.nextInt(110) * 1.0f, "SL"});
+//            if (i % 3 == 0) {
+//                inputHandler.send(new Object[]{"" + i, 99f, "A"});
+//            } else if (i % 3 == 1) {
+//                inputHandler.send(new Object[]{"" + (i - 1), 99f, "B"});
+//            } else {
+//                inputHandler.send(new Object[]{"" + (i), 99f, "C"});
+//            }
+            if (i < 10000) {
+                inputHandler.send(new Object[]{"1234", random.nextInt(200) * 1.0f, "SL"});
+            } else {
+                inputHandler.send(new Object[]{"1234", 99f, "SL"});
+            }
+            eventCount++;
+            if (eventCount % 2 == 0) {
+                Thread.sleep(1);
+                if (eventCount % 1000 == 0) {
+                    long currentTime = System.currentTimeMillis();
+                    long timeToSleep = 1000 - (currentTime - startTime);
+                    if (timeToSleep > 5) {
+                        Thread.sleep(timeToSleep - 5);
+                    }
+                    currentTime = System.currentTimeMillis();
+                    startTime = currentTime;
+                    if (eventCount % 10000 == 0) {
+                        System.out.println((eventCount * 1000) / (currentTime - startTimeStats));
+                        startTimeStats = currentTime;
+                        eventCount = 0;
+                    }
+                }
+            }
         }
-
-//        inputHandler.send(new Object[]{"1234", 5f, "SL"});
-//        inputHandler.send(new Object[]{"1234", 105f, "SL"});
-
         System.out.println("published");
         Thread.sleep(1000000000);
 

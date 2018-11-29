@@ -15,10 +15,17 @@ spec:
         app: length-window-distributed-unique-server
     spec:
       containers:
-      - name: llength-window-unique-server
+      - name: length-window-unique-server
         image: suhothayan/siddhitest:latest
         ports:
         - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
         env:
         -
           name: MAIN_CLASS

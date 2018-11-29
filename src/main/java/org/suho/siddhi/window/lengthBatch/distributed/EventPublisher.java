@@ -62,7 +62,7 @@ public class EventPublisher {
                 "\n" +
                 "@sink(type='tcp', sync='true', @map(type='binary'), " +
                 "   @distribution(strategy='roundRobin', " +
-                "       "+destinations+")) \n" +
+                "       " + destinations + ")) \n" +
                 "define stream StockEventStream (symbol string, price float, volume long, seqNo long);\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();
@@ -74,10 +74,33 @@ public class EventPublisher {
         siddhiAppRuntime.start();
 
         long eventsToPublish = 100000000;
-//        long eventsToPublish = 2;
+        int eventCount = 0;
+        long startTime = System.currentTimeMillis();
+        long startTimeStats = startTime;
+
         //Sending events to Siddhi
         for (long i = 0; i < eventsToPublish; i++) {
             inputHandler.send(new Object[]{"IBM", 100f, 100L, i});
+            eventCount++;
+            if (eventCount % 2 == 0) {
+                Thread.sleep(1);
+                if (eventCount % 1000 == 0) {
+                    long currentTime = System.currentTimeMillis();
+                    long timeToSleep = 1000 - (currentTime - startTime);
+                    if (timeToSleep > 5) {
+//                        System.out.println("--" + timeToSleep);
+                        Thread.sleep(timeToSleep - 5);
+                    }
+                    currentTime = System.currentTimeMillis();
+                    startTime = currentTime;
+                    if (eventCount % 10000 == 0) {
+                        System.out.println((eventCount * 1000) / (currentTime - startTimeStats));
+                        startTimeStats = currentTime;
+                        eventCount = 0;
+
+                    }
+                }
+            }
         }
         System.out.println("published");
         Thread.sleep(1000000000);

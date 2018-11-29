@@ -22,6 +22,7 @@ import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
+import org.wso2.siddhi.core.util.EventPrinter;
 import org.wso2.siddhi.core.util.config.InMemoryConfigManager;
 
 import java.util.HashMap;
@@ -74,6 +75,9 @@ public class EventConsumer {
 
             @Override
             public void receive(Event[] events) {
+                if(eventCount==0){
+                    EventPrinter.print(events);
+                }
                 for (Event event : events) {
                     eventCount++;
 //                    timeSpent += (System.currentTimeMillis() - (Long) event.getData(3));
@@ -82,13 +86,13 @@ public class EventConsumer {
                                 startTime));
 //                        System.out.println("Time spent :  " + (timeSpent * 1.0 / eventCount));
                         startTime = System.currentTimeMillis();
-                        eventCount = 0;
 //                        timeSpent = 0;
                     }
                 }
             }
         });
 
+        System.out.println("Throughput : ");
         //Start SiddhiApp runtime
         siddhiAppRuntime.start();
 

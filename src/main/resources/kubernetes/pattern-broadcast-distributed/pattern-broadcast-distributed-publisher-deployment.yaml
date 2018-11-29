@@ -15,7 +15,7 @@ spec:
         app: pattern-broadcast-distributed-publisher
     spec:
       containers:
-      - name: llength-window-publisher
+      - name: pattern-broadcast-distributed-publisher
         image: suhothayan/siddhitest:latest
         ports:
         - containerPort: 80

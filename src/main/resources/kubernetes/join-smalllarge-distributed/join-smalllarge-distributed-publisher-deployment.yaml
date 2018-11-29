@@ -15,10 +15,17 @@ spec:
         app: join-smalllarge-distributed-publisher
     spec:
       containers:
-      - name: llength-window-publisher
+      - name: join-smalllarge-publisher
         image: suhothayan/siddhitest:latest
         ports:
         - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
         env:
         -
           name: MAIN_CLASS

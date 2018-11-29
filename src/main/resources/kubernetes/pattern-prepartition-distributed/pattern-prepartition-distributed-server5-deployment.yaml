@@ -15,10 +15,17 @@ spec:
         app: pattern-prepartition-distributed-server5
     spec:
       containers:
-      - name: llength-window-server5
+      - name: pattern-prepartition-distributed-server5
         image: suhothayan/siddhitest:latest
         ports:
         - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
         env:
         -
           name: MAIN_CLASS
@@ -31,10 +38,13 @@ spec:
           value: "pattern-prepartition-distributed-consumer-service:80"
         -
           name: DATA1
-          value: "1 min"
+          value: "3 min"
         -
           name: DATA2
-          value: "60000"
+          value: "180000"
+        -
+          name: JAVA_OPPS
+          value: "-Xms128m -Xmx256m"
 ---
 kind: Service
 apiVersion: v1

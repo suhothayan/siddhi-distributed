@@ -15,10 +15,17 @@ spec:
         app: join-largelarge-distributed-unique-server
     spec:
       containers:
-      - name: llength-window-server
+      - name: join-largelarge-server
         image: suhothayan/siddhitest:latest
         ports:
         - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
         env:
         -
           name: MAIN_CLASS
@@ -35,6 +42,9 @@ spec:
         -
           name: DATA2
           value: "-"
+        -
+          name: JAVA_OPPS
+          value: "-Xms128m -Xmx256m"
 ---
 kind: Service
 apiVersion: v1

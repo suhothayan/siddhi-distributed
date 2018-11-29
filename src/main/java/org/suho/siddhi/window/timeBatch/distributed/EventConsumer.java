@@ -74,12 +74,14 @@ public class EventConsumer {
 
             @Override
             public void receive(Event[] events) {
-                EventPrinter.print(events);
+                if(eventCount==0){
+                    EventPrinter.print(events);
+                }
                 for (Event event : events) {
                     eventCount++;
 //                    timeSpent += (System.currentTimeMillis() - (Long) event.getData(3));
-                    if (eventCount % 10000 == 0) {
-                        System.out.println("Throughput : " + (eventCount * 1000) / ((System.currentTimeMillis()) -
+                    if (eventCount % 100 == 0) {
+                        System.out.println((eventCount * 1000) / ((System.currentTimeMillis()) -
                                 startTime));
 //                        System.out.println("Time spent :  " + (timeSpent * 1.0 / eventCount));
                         startTime = System.currentTimeMillis();
@@ -90,6 +92,7 @@ public class EventConsumer {
             }
         });
 
+        System.out.println("Throughput : ");
         //Start SiddhiApp runtime
         siddhiAppRuntime.start();
 

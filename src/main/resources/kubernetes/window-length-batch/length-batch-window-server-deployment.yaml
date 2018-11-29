@@ -15,10 +15,17 @@ spec:
         app: length-batch-window-server
     spec:
       containers:
-      - name: llength-window-server
+      - name: length-batch-window-server
         image: suhothayan/siddhitest:latest
         ports:
         - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
         env:
         -
           name: MAIN_CLASS
@@ -31,7 +38,7 @@ spec:
           value: "length-batch-window-consumer-service:80"
         -
           name: DATA1
-          value: "10000"
+          value: "20000"
         -
           name: DATA2
           value: "-"

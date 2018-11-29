@@ -15,7 +15,7 @@ public class LengthWindowServer2 {
     public static void main(String[] args) throws InterruptedException {
         String consume = "9882";
         String publish = "127.0.0.1:9893";
-        String data = "100000";
+        String data = "5000";
         if (args.length != 0) {
             if (args.length == 3) {
                 consume = args[0];
@@ -34,7 +34,8 @@ public class LengthWindowServer2 {
                 "@source(type='tcp', @map(type='binary')) \n" +
                 "define stream StockEventStream (symbol string, price float, volume long, seqNo long);\n" +
                 "\n" +
-//                "@sink(type='tcp', url='tcp://" + publish + "/length-window/PartialAggregateStockStream', sync='true', @map(type='binary')) \n" +
+//                "@sink(type='log') " +
+                "@sink(type='tcp', url='tcp://" + publish + "/length-window/PartialAggregateStockStream', sync='true', @map(type='binary')) \n" +
                 "define stream PartialAggregateStockStream (symbol string, totalPrice double, totalVolume long, countVolume long, id string);\n" +
                 "                \n" +
                 "@info(name = 'query1') \n" +
