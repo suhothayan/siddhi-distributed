@@ -38,10 +38,10 @@ spec:
           value: "pattern-broadcast-distributed-server3-service:80"
         -
           name: DATA1
-          value: "3 min"
+          value: "4 min"
         -
           name: DATA2
-          value: "180000"
+          value: "240000"
         -
           name: JAVA_OPPS
           value: "-Xms128m -Xmx256m"

@@ -58,18 +58,18 @@ public class PatternServer2 {
                 "@app:statistics(reporter = 'console', interval = '5' ) \n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream CardStream (cardId string, amount float, location string);\n" +
+                "define stream CardStream (cardId string, amount float, location string,ts long);\n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream PossibleFraudStream1 (initialPurchaseAmount float, timestamp long);\n" +
+                "define stream PossibleFraudStream1 (cardId string, location string, timestamp long,ts long);\n" +
                 "\n" +
                 "@sink(type='tcp', url='tcp://" + publish + "/pattern/PossibleFraudStream2', sync='true', @map(type='binary')) \n" +
-                "define stream PossibleFraudStream2 (initialPurchaseAmount float, timestamp long);\n" +
+                "define stream PossibleFraudStream2 (cardId string, timestamp long,ts long);\n" +
                 "\n" +
                 "@info(name = 'query1') \n" +
-                "from every a=PossibleFraudStream1 ->  b = CardStream[amount < 100 and (currentTimeMillis() - a.timestamp) < " + data2 + "]\n" +
+                "from every a=PossibleFraudStream1 ->  b = CardStream[a.cardId==cardId and location == 'B' and ((currentTimeMillis() - a.timestamp) < " + data2 + ")]\n" +
                 "    within " + data1 + "\n" +
-                "select a.initialPurchaseAmount, a.timestamp  \n" +
+                "select a.cardId as cardId, a.timestamp, a.ts  \n" +
                 "insert into PossibleFraudStream2;\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();

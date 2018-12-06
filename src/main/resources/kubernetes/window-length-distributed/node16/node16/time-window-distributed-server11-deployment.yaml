@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: length-window-distributed-server11-deployment
+  labels:
+    app: length-window-distributed-server11
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: length-window-distributed-server11
+  template:
+    metadata:
+      labels:
+        app: length-window-distributed-server11
+    spec:
+      containers:
+      - name: length-window-server11
+        image: suhothayan/siddhitest:latest
+        terminationMessagePolicy: FallbackToLogsOnError
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.window.length.distributed.LengthWindowServer"
+        -
+          name: CONSUME
+          value: "80"
+        -
+          name: PUBLISH
+          value: "length-window-distributed-unique-server-service:80"
+        -
+          name: DATA1
+          value: "900000"
+        -
+          name: DATA2
+          value: "11"
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: length-window-distributed-server11-service
+spec:
+  selector:
+    app: length-window-distributed-server11
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

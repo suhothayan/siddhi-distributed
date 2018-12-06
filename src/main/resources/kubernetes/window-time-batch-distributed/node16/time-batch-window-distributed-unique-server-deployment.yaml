@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: time-batch-window-distributed-unique-server-deployment
+  labels:
+    app: time-batch-window-distributed-unique-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: time-batch-window-distributed-unique-server
+  template:
+    metadata:
+      labels:
+        app: time-batch-window-distributed-unique-server
+    spec:
+      containers:
+      - name: time-batch-window-unique-server
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.window.timeBatch.distributed.TimeBatchWindowUniqueServer"
+        -
+          name: CONSUME
+          value: "80"
+        -
+          name: PUBLISH
+          value: "time-batch-window-distributed-consumer-service:80"
+        -
+          name: DATA1
+          value: "8"
+        -
+          name: DATA2
+          value: "-"
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: time-batch-window-distributed-unique-server-service
+spec:
+  selector:
+    app: time-batch-window-distributed-unique-server
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

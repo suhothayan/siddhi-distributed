@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: time-window-distributed-server-deployment
+  labels:
+    app: time-window-distributed-server
+spec:
+  replicas: 16
+  selector:
+    matchLabels:
+      app: time-window-distributed-server
+  template:
+    metadata:
+      labels:
+        app: time-window-distributed-server
+    spec:
+      containers:
+      - name: time-window-server
+        image: suhothayan/siddhitest:latest
+        terminationMessagePolicy: FallbackToLogsOnError
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.window.time.distributed.TimeWindowServerN"
+        -
+          name: CONSUME
+          value: "80"
+        -
+          name: PUBLISH
+          value: "time-window-distributed-unique-server-service:80"
+        -
+          name: DATA1
+          value: "2 min"
+        -
+          name: DATA2
+          value: "-"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: time-window-distributed-server-service
+spec:
+  selector:
+    app: time-window-distributed-server
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

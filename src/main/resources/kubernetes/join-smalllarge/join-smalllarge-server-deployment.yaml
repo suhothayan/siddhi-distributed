@@ -22,10 +22,10 @@ spec:
         resources:
           requests:
             memory: "128Mi"
-            cpu: "250m"
+            cpu: "500m"
           limits:
             memory: "256Mi"
-            cpu: "500m"
+            cpu: "1"
         env:
         -
           name: MAIN_CLASS
@@ -38,13 +38,13 @@ spec:
           value: "join-smalllarge-consumer-service:80"
         -
           name: DATA1
-          value: "30000"
+          value: "60"
         -
           name: DATA2
-          value: "200"
+          value: "20"
         -
           name: JAVA_OPPS
-          value: "-Xms128m -Xmx256m"
+          value: ""
 ---
 kind: Service
 apiVersion: v1

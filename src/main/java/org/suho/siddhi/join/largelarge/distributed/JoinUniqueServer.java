@@ -37,7 +37,7 @@ public class JoinUniqueServer {
             System.out.println("\t" + arg);
         }
 
-        String consume = "9885";
+        String consume = "9875";
         String publish = "127.0.0.1:9895";
         String data1 = "-";
         String data2 = "-";
@@ -59,14 +59,14 @@ public class JoinUniqueServer {
                 "@app:statistics(reporter = 'console', interval = '5' ) \n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream PartialOutputStream (sumPriceA double, countEvents long, sumPriceB double, id string);\n" +
+                "define stream PartialOutputStream (sumPriceA double, countEvents long, sumPriceB double, id string, ts long);\n" +
                 "\n" +
                 "@sink(type='tcp', url='tcp://" + publish + "/consumer/OutputStream', sync='true', @map(type='binary')) \n" +
-                "define stream OutputStream (sumPrice double, countEvents long, avgPrice double);\n" +
+                "define stream OutputStream (sumPrice double, countEvents long, avgPrice double, ts long);\n" +
                 "                \n" +
                 "@info(name = 'query1') \n" +
                 "from PartialOutputStream#window.unique:ever(id) \n" +
-                "select sum(sumPriceA) as sumPrice, sum(countEvents) as countEvents, sum(sumPriceB)*1.0/sum(countEvents) as avgPrice \n" +
+                "select sum(sumPriceA) as sumPrice, sum(countEvents) as countEvents, sum(sumPriceB)*1.0/sum(countEvents) as avgPrice, ts \n" +
                 "insert into OutputStream ;\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();

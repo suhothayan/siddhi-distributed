@@ -35,11 +35,15 @@ public class EventPublisher {
             System.out.println("\t" + arg);
         }
         Thread.sleep(9000);
-
         String consume = "127.0.0.1:9881,127.0.0.1:9882";
         String publish = "127.0.0.1:9883,127.0.0.1:9884";
         String data1 = "127.0.0.1:9881,127.0.0.1:9883";
         String data2 = "127.0.0.1:9882,127.0.0.1:9884";
+
+//        String consume = "127.0.0.1:9881,127.0.0.1:9882,127.0.0.1:9885,127.0.0.1:9886,127.0.0.1:9889";
+//        String publish = "127.0.0.1:9883,127.0.0.1:9884,127.0.0.1:9887,127.0.0.1:9888";
+//        String data1 = "127.0.0.1:9881,127.0.0.1:9883,127.0.0.1:9885,127.0.0.1:9887,127.0.0.1:9889";
+//        String data2 = "127.0.0.1:9882,127.0.0.1:9884,127.0.0.1:9886,127.0.0.1:9888";
         if (args.length != 0) {
             if (args.length == 4) {
                 consume = args[0];
@@ -81,28 +85,28 @@ public class EventPublisher {
         String siddhiApp = "" +
                 "@app:name('publisher')\n" +
                 "" +
-                "define stream StreamA (symbol string, price float, volume long, seqNo long);\n" +
-                "define stream StreamB (symbol string, price float, volume long, seqNo long);\n" +
+                "define stream StreamA (symbol string, price float, volume long, seqNo long, ts long);\n" +
+                "define stream StreamB (symbol string, price float, volume long, seqNo long, ts long);\n" +
                 "\n" +
                 "@sink(type='tcp', sync='true', @map(type='binary'), " +
                 "   @distribution(strategy='roundRobin', " +
                 "       " + destinations1 + ")) \n" +
-                "define stream StreamA1 (symbol string, price float, volume long, seqNo long);\n" +
+                "define stream StreamA1 (symbol string, price float, volume long, seqNo long, ts long);\n" +
                 "" +
                 "@sink(type='tcp', sync='true', @map(type='binary'), " +
                 "   @distribution(strategy='roundRobin', " +
                 "       " + destinations2 + ")) \n" +
-                "define stream StreamA2 (symbol string, price float, volume long, seqNo long);\n" +
+                "define stream StreamA2 (symbol string, price float, volume long, seqNo long, ts long);\n" +
                 "\n" +
                 "@sink(type='tcp', sync='true', @map(type='binary'), " +
                 "   @distribution(strategy='roundRobin', " +
                 "       " + destinations3 + ")) \n" +
-                "define stream StreamB1 (symbol string, price float, volume long, seqNo long);\n" +
+                "define stream StreamB1 (symbol string, price float, volume long, seqNo long, ts long);\n" +
                 "" +
                 "@sink(type='tcp', sync='true', @map(type='binary'), " +
                 "   @distribution(strategy='roundRobin', " +
                 "       " + destinations4 + ")) \n" +
-                "define stream StreamB2 (symbol string, price float, volume long, seqNo long);\n" +
+                "define stream StreamB2 (symbol string, price float, volume long, seqNo long, ts long);\n" +
                 "" +
                 "from StreamA[seqNo % 2 == 1]" +
                 "insert into StreamA1;" +
@@ -133,8 +137,8 @@ public class EventPublisher {
 
         //Sending events to Siddhi
         for (long i = 0; i < eventsToPublish; i++) {
-            inputHandlerA.send(new Object[]{"IBM", 100f, 100L, i});
-            inputHandlerB.send(new Object[]{"IBM", 100f, 100L, i});
+            inputHandlerA.send(new Object[]{"IBM", 100f, 100L, i, System.currentTimeMillis()});
+            inputHandlerB.send(new Object[]{"IBM", 100f, 100L, i, System.currentTimeMillis()});
             eventCount++;
             if (eventCount % 2 == 0) {
                 Thread.sleep(1);

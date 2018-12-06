@@ -39,14 +39,14 @@ public class TimeWindowServer {
                 "@app:statistics(reporter = 'console', interval = '5' ) \n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream StockEventStream (symbol string, price float, volume long);\n" +
+                "define stream StockEventStream (symbol string, price float, volume long, ts long);\n" +
                 "\n" +
                 "@sink(type='tcp', url='tcp://" + publish + "/consumer/AggregateStockStream', sync='true', @map(type='binary')) \n" +
-                "define stream AggregateStockStream (symbol string, totalPrice double, avgVolume double);\n" +
+                "define stream AggregateStockStream (symbol string, totalPrice double, avgVolume double,  ts long);\n" +
                 "                \n" +
                 "@info(name = 'query1') \n" +
                 "from StockEventStream#window.time("+data1+")  \n" +
-                "select symbol, sum(price) as totalPrice, avg(volume) as avgVolume \n" +
+                "select symbol, sum(price) as totalPrice, avg(volume) as avgVolume, ts \n" +
                 "group by symbol \n" +
                 "insert into AggregateStockStream ;\n";
 

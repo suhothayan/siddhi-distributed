@@ -40,7 +40,7 @@ public class EventPublisher {
         String consume = "-";
         String publish = "127.0.0.1:9881,127.0.0.1:9882";
         String data1 = "127.0.0.1:9883,127.0.0.1:9884";
-        String data2 = "127.0.0.1:9885";
+        String data2 = "127.0.0.1:9885,127.0.0.1:9886";
         if (args.length != 0) {
             if (args.length == 4) {
                 consume = args[0];
@@ -75,30 +75,30 @@ public class EventPublisher {
         String siddhiApp = "" +
                 "@app:name('publisher')\n" +
                 "\n" +
-                "define stream CardStream (cardId string, amount float, location string);\n" +
+                "define stream CardStream (cardId string, amount float, location string, ts long);\n" +
                 "" +
                 "@sink(type='tcp', sync='true', @map(type='binary'), " +
                 "   @distribution(strategy='roundRobin', " +
                 "       " + destinations1 + ")) \n" +
-                "define stream CardStreamS1 (cardId string, amount float, location string);" +
+                "define stream CardStreamS1 (cardId string, amount float, location string,ts long);" +
                 "" +
                 "@sink(type='tcp', sync='true', @map(type='binary'), " +
                 "   @distribution(strategy='broadcast', " +
                 "       " + destinations2 + ")) \n" +
-                "define stream CardStreamS2 (cardId string, amount float, location string);" +
+                "define stream CardStreamS2 (cardId string, amount float, location string,ts long);" +
                 "" +
                 "@sink(type='tcp', sync='true', @map(type='binary'), " +
-                "   @distribution(strategy='roundRobin', " +
+                "   @distribution(strategy='broadcast', " +
                 "       " + destinations3 + ")) \n" +
-                "define stream CardStreamL (cardId string, amount float, location string);" +
+                "define stream CardStreamL (cardId string, amount float, location string,ts long);" +
                 "" +
-                "from CardStream[amount < 100]" +
+                "from CardStream[location == 'A' or location == 'D']" +
                 "insert into CardStreamS1;" +
                 "" +
-                "from CardStream[amount < 100]" +
+                "from CardStream[location == 'B']" +
                 "insert into CardStreamS2;" +
                 "" +
-                "from CardStream[amount > 100]" +
+                "from CardStream[location == 'C']" +
                 "insert into CardStreamL;" +
                 "";
 
@@ -110,26 +110,42 @@ public class EventPublisher {
         //Start SiddhiApp runtime
         siddhiAppRuntime.start();
 
-        long eventsToPublish = 100000000;
+        long eventsToPublish = 10000;
         int eventCount = 0;
         long startTime = System.currentTimeMillis();
         long startTimeStats = startTime;
         Random random = new Random();
+        String[] array = new String[]{"A", "B", "C"};
 
         //Sending events to Siddhi
         for (int i = 0; i < eventsToPublish; i++) {
+//            inputHandler.send(new Object[]{"1234", random.nextInt(200) * 1.0f, array[random.nextInt(3)], System.currentTimeMillis()});
+
+            if (i % 3 == 0) {
+                inputHandler.send(new Object[]{"" + i, 99f, "A", System.currentTimeMillis()});
+            } else if (i % 3 == 1) {
+                inputHandler.send(new Object[]{"" + (i - 1), 99f, "B", System.currentTimeMillis()});
+            } else {
+                inputHandler.send(new Object[]{"" + (i - 2), 99f, "C", System.currentTimeMillis()});
+            }
+
 //            if (i % 3 == 0) {
 //                inputHandler.send(new Object[]{"" + i, 99f, "A"});
 //            } else if (i % 3 == 1) {
-//                inputHandler.send(new Object[]{"" + (i - 1), 99f, "B"});
+//                inputHandler.send(new Object[]{"" + (i), 99f, "A"});
 //            } else {
-//                inputHandler.send(new Object[]{"" + (i), 99f, "C"});
+//                if (i < 5000) {
+//                    inputHandler.send(new Object[]{"" + i, 99f, "D"});
+//                } else {
+//                    inputHandler.send(new Object[]{"" + (i - 5000), 99f, "B"});
+//                }
 //            }
-            if (i < 10000) {
-                inputHandler.send(new Object[]{"1234", random.nextInt(200) * 1.0f, "SL"});
-            } else {
-                inputHandler.send(new Object[]{"1234", 99f, "SL"});
-            }
+
+//            if (i < 10000) {
+//                inputHandler.send(new Object[]{"1234", random.nextInt(200) * 1.0f, "SL"});
+//            } else {
+//                inputHandler.send(new Object[]{"1234", 99f, "SL"});
+//            }
             eventCount++;
             if (eventCount % 2 == 0) {
                 Thread.sleep(1);

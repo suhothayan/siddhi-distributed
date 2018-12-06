@@ -58,7 +58,7 @@ public class EventConsumer {
                 "@app:name('consumer')\n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream PossibleFraudStream (initialPurchaseAmount float, lastPurchaseAmount float, location string);\n";
+                "define stream PossibleFraudStream (cardId string, location string,ts long);\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();
         Map<String, String> executionConfig = new HashMap<>();
@@ -68,23 +68,25 @@ public class EventConsumer {
 
         siddhiAppRuntime.addCallback("PossibleFraudStream", new StreamCallback() {
             public int eventCount = 0;
-            //            public int timeSpent = 0;
+            public int timeSpent = 0;
             long startTime = System.currentTimeMillis();
 
             @Override
             public void receive(Event[] events) {
-                for (Event event : events) {
-                    eventCount++;
-//                    timeSpent += (System.currentTimeMillis() - (Long) event.getData(3));
-                    if (eventCount % 1000 == 0) {
-                        System.out.println((eventCount * 1000) / ((System.currentTimeMillis()) -
-                                startTime));
+                eventCount += events.length;
+                System.out.println(eventCount);
+//                for (Event event : events) {
+//                    eventCount++;
+//                    timeSpent += (System.currentTimeMillis() - (Long) event.getData(2));
+//                    if (eventCount % 1000 == 0) {
+//                        System.out.println((eventCount * 1000) / ((System.currentTimeMillis()) -
+//                                startTime));
 //                        System.out.println("Time spent :  " + (timeSpent * 1.0 / eventCount));
-                        startTime = System.currentTimeMillis();
-                        eventCount = 0;
+//                        startTime = System.currentTimeMillis();
+//                        eventCount = 0;
 //                        timeSpent = 0;
-                    }
-                }
+//                    }
+//                }
             }
         });
 

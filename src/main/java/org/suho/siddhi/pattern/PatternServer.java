@@ -57,18 +57,18 @@ public class PatternServer {
                 "@app:statistics(reporter = 'console', interval = '5' ) \n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream CardStream (cardId string, amount float, location string);\n" +
+                "define stream CardStream (cardId string, amount float, location string, ts long);\n" +
                 "\n" +
                 "@sink(type='tcp', url='tcp://" + publish + "/consumer/PossibleFraudStream', sync='true', @map(type='binary')) \n" +
-                "define stream PossibleFraudStream (initialPurchaseAmount float, lastPurchaseAmount float, location string);\n" +
+                "define stream PossibleFraudStream (initialPurchaseAmount float, lastPurchaseAmount float, location string, ts long);\n" +
                 "                \n" +
                 "@info(name = 'query1') \n" +
-                "from every a = CardStream[amount < 100]\n" +
-                "    -> b = CardStream[amount < 100]\n" +
-                "    -> c = CardStream[amount > 100]\n" +
+                "from every a = CardStream[location == 'A']\n" +
+                "    -> b = CardStream[location == 'B' and a.cardId == cardId]\n" +
+                "    -> c = CardStream[location == 'C' and a.cardId == cardId]\n" +
                 "    within " + data1 + "\n" +
                 "select a.amount as initialPurchaseAmount, \n" +
-                "   c.amount as lastPurchaseAmount, c.location as location\n" +
+                "   c.amount as lastPurchaseAmount, c.location as location, a.ts\n" +
                 "insert into PossibleFraudStream;\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();

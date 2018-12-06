@@ -40,7 +40,7 @@ public class EventConsumer {
                 "@app:name('consumer')\n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream AggregateStockStream (symbol string, totalPrice double, avgVolume double);\n";
+                "define stream AggregateStockStream (symbol string, totalPrice double, avgVolume double, ts long);\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();
         Map<String, String> executionConfig = new HashMap<>();
@@ -50,21 +50,47 @@ public class EventConsumer {
 
         siddhiAppRuntime.addCallback("AggregateStockStream", new StreamCallback() {
             public int eventCount = 0;
-            //            public int timeSpent = 0;
+            public int timeSpent = 0;
+            long lastEventId = -1;
+            long maxEventId = -1;
+            long maxdelay = -1;
+            int order = 0;
+            int outOfOrder = 0;
             long startTime = System.currentTimeMillis();
 
             @Override
             public void receive(Event[] events) {
+//                EventPrinter.print(events);
                 for (Event event : events) {
                     eventCount++;
-//                    timeSpent += (System.currentTimeMillis() - (Long) event.getData(3));
+                    Long evnetId = (Long) event.getData(3);
+                    synchronized (this) {
+                        if (evnetId >= lastEventId) {
+                            order++;
+                        } else {
+                            outOfOrder++;
+                        }
+                        lastEventId = evnetId;
+                        if (maxEventId > evnetId) {
+                            if (maxEventId - evnetId > maxdelay) {
+                                maxdelay = maxEventId - evnetId;
+                            }
+                        } else {
+                            maxEventId = evnetId;
+                        }
+                    }
+                    timeSpent += (System.currentTimeMillis() - (Long) event.getData(3));
                     if (eventCount % 10000 == 0) {
                         System.out.println((eventCount * 1000) / ((System.currentTimeMillis()) -
                                 startTime));
-//                        System.out.println("Time spent :  " + (timeSpent * 1.0 / eventCount));
+                        System.out.println("Time spent :  " + (timeSpent * 1.0 / eventCount));
+                        System.out.println("order :  " + order + " outOfOrder : " + outOfOrder + " maxdelay : " + maxdelay);
                         startTime = System.currentTimeMillis();
                         eventCount = 0;
-//                        timeSpent = 0;
+                        timeSpent = 0;
+                        outOfOrder = 0;
+                        order = 0;
+                        maxdelay = 0;
                     }
                 }
             }

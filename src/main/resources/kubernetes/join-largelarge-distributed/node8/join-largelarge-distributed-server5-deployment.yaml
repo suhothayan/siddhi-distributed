@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: join-largelarge-distributed-server5-deployment
+  labels:
+    app: join-largelarge-distributed-server5
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: join-largelarge-distributed-server5
+  template:
+    metadata:
+      labels:
+        app: join-largelarge-distributed-server5
+    spec:
+      containers:
+      - name: join-largelarge-server5
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "500m"
+          limits:
+            memory: "256Mi"
+            cpu: "1"
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.join.largelarge.distributed.JoinServer4"
+        -
+          name: CONSUME
+          value: "80"
+        -
+          name: PUBLISH
+          value: "join-largelarge-distributed-unique-server-service:80"
+        -
+          name: DATA1
+          value: "2200,2200"
+        -
+          name: DATA2
+          value: "5"
+        -
+          name: JAVA_OPPS
+          value: ""
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: join-largelarge-distributed-server5-service
+spec:
+  selector:
+    app: join-largelarge-distributed-server5
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

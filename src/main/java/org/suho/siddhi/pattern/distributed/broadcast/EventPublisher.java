@@ -22,6 +22,7 @@ import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -64,7 +65,7 @@ public class EventPublisher {
                 "@sink(type='tcp', sync='true', @map(type='binary'), " +
                 "   @distribution(strategy='broadcast', " +
                 "       " + destinations1 + ")) \n" +
-                "define stream CardStream (cardId string, amount float, location string);\n";
+                "define stream CardStream (cardId string, amount float, location string,ts long);\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
@@ -79,13 +80,18 @@ public class EventPublisher {
         long startTime = System.currentTimeMillis();
         long startTimeStats = startTime;
         Random random = new Random();
+        String[] array = new String[]{"A","B","C"};
 
         //Sending events to Siddhi
         for (int i = 0; i < eventsToPublish; i++) {
-            if (i < 10000) {
-                inputHandler.send(new Object[]{"1234", random.nextInt(200) * 1.0f, "SL"});
+            if (i < 100000) {
+                inputHandler.send(new Object[]{"1234", random.nextInt(200) * 1.0f, array[random.nextInt(3)], System.currentTimeMillis()});
+            } else if (i % 3 == 0) {
+                inputHandler.send(new Object[]{"" + i, 99f, "A", System.currentTimeMillis()});
+            } else if (i % 3 == 1) {
+                inputHandler.send(new Object[]{"" + (i), 99f, "A", System.currentTimeMillis()});
             } else {
-                inputHandler.send(new Object[]{"1234", 99f, "SL"});
+                inputHandler.send(new Object[]{"" + (i - 2), 99f, "B", System.currentTimeMillis()});
             }
             eventCount++;
             if (eventCount % 2 == 0) {

@@ -21,7 +21,7 @@ public class TimeWindowServer2 {
         Thread.sleep(6000);
 
         String consume = "9882";
-        String publish = "127.0.0.1:9883";
+        String publish = "127.0.0.1:9873";
         String data1 = "15 sec";
         String data2 = "2";
         if (args.length != 0) {
@@ -40,14 +40,14 @@ public class TimeWindowServer2 {
                 "@app:statistics(reporter = 'console', interval = '5' ) \n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream StockEventStream (symbol string, price float, volume long);\n" +
+                "define stream StockEventStream (symbol string, price float, volume long, ts long);\n" +
                 "\n" +
                 "@sink(type='tcp', url='tcp://" + publish + "/time-window/PartialAggregateStockStream', sync='true', @map(type='binary')) \n" +
-                "define stream PartialAggregateStockStream (symbol string, totalPrice double, totalVolume long, countVolume long, id string);\n" +
+                "define stream PartialAggregateStockStream (symbol string, totalPrice double, totalVolume long, countVolume long, id string, ts long);\n" +
                 "\n" +
                 "@info(name = 'query1') \n" +
                 "from StockEventStream#window.time(" + data1 + ")  \n" +
-                "select symbol, sum(price) as totalPrice, sum(volume) as totalVolume, count(volume) as countVolume, '" + data2 + "' as id \n" +
+                "select symbol, sum(price) as totalPrice, sum(volume) as totalVolume, count(volume) as countVolume, '" + data2 + "' as id, ts \n" +
                 "group by symbol \n" +
                 "insert into PartialAggregateStockStream ;\n";
 

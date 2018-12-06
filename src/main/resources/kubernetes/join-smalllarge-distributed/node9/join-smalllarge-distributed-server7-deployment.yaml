@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: join-smalllarge-distributed-server7-deployment
+  labels:
+    app: join-smalllarge-distributed-server7
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: join-smalllarge-distributed-server7
+  template:
+    metadata:
+      labels:
+        app: join-smalllarge-distributed-server7
+    spec:
+      containers:
+      - name: join-smalllarge-server
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "500m"
+          limits:
+            memory: "256Mi"
+            cpu: "1"
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.join.smalllarge.distributed.JoinServer2"
+        -
+          name: CONSUME
+          value: "80"
+        -
+          name: PUBLISH
+          value: "join-smalllarge-distributed-unique-server-service:80"
+        -
+          name: DATA1
+          value: "550,20"
+        -
+          name: DATA2
+          value: "7"
+        -
+          name: JAVA_OPPS
+          value: ""
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: join-smalllarge-distributed-server7-service
+spec:
+  selector:
+    app: join-smalllarge-distributed-server7
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

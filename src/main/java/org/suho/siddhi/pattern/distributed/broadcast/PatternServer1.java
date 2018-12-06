@@ -59,15 +59,15 @@ public class PatternServer1 {
                 "@app:statistics(reporter = 'console', interval = '5' ) \n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream CardStream (cardId string, amount float, location string);\n" +
+                "define stream CardStream (cardId string, amount float, location string, ts long);\n" +
                 "\n" +
                 "@sink(type='tcp', url='tcp://" + publish + "/pattern/PossibleFraudStream1', sync='true', @map(type='binary')) \n" +
-                "define stream PossibleFraudStream1 (initialPurchaseAmount float, timestamp long);\n" +
+                "define stream PossibleFraudStream1 (cardId string, location string, timestamp long,ts long);\n" +
                 "\n" +
                 "@info(name = 'query1') \n" +
-                "from every a = CardStream[amount < 100]\n" +
+                "from every a = CardStream[location == 'A']\n" +
                 "    within " + data1 + "\n" +
-                "select a.amount as initialPurchaseAmount, currentTimeMillis() as timestamp  \n" +
+                "select a.cardId as cardId, a.location as location, currentTimeMillis() as timestamp, a.ts  \n" +
                 "insert into PossibleFraudStream1;\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();

@@ -53,10 +53,10 @@ public class EventPublisher {
                 "@app:name('publisher')\n" +
                 "\n" +
                 "@sink(type='tcp', url='tcp://" + publish + "/join/StreamA', sync='true', @map(type='binary')) \n" +
-                "define stream StreamA (symbol string, price float, volume long);\n" +
+                "define stream StreamA (symbol string, price float, volume long,ts long);\n" +
                 "\n" +
                 "@sink(type='tcp', url='tcp://" + publish + "/join/StreamB', sync='true', @map(type='binary')) \n" +
-                "define stream StreamB (symbol string, price float, volume long);\n" +
+                "define stream StreamB (symbol string, price float, volume long,ts long);\n" +
                 "";
 
         SiddhiManager siddhiManager = new SiddhiManager();
@@ -75,8 +75,8 @@ public class EventPublisher {
 
         //Sending events to Siddhi
         for (int i = 0; i < eventsToPublish; i++) {
-            inputHandlerA.send(new Object[]{"IBM", 100f, 100L});
-            inputHandlerB.send(new Object[]{"IBM", 100f, 100L});
+            inputHandlerA.send(new Object[]{"IBM", 100f, 100L, System.currentTimeMillis()});
+            inputHandlerB.send(new Object[]{"IBM", 100f, 100L,System.currentTimeMillis()});
             eventCount++;
             if (eventCount % 2 == 0) {
                 Thread.sleep(1);

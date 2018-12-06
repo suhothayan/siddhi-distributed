@@ -19,7 +19,7 @@ public class EventPublisher {
         Thread.sleep(9000);
 
         String consume = "-";
-        String publish = "127.0.0.1:9881,127.0.0.1:9882";
+        String publish = "127.0.0.1:9881,127.0.0.1:9882,127.0.0.1:9883,127.0.0.1:9884";
         String data1 = "-";
         String data2 = "-";
         if (args.length != 0) {
@@ -45,7 +45,7 @@ public class EventPublisher {
                 "@sink(type='tcp', sync='true', @map(type='binary'), " +
                 "   @distribution(strategy='roundRobin', " +
                 "       " + destinations + ")) \n" +
-                "define stream StockEventStream (symbol string, price float, volume long);\n";
+                "define stream StockEventStream (symbol string, price float, volume long, ts long);\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
@@ -61,12 +61,12 @@ public class EventPublisher {
         long startTimeStats = startTime;
 
         //Sending events to Siddhi
-        for (int i = 0; i < eventsToPublish; i++) {
-            inputHandler.send(new Object[]{"IBM", 100f, 100L});
+        for (long i = 0; i < eventsToPublish; i++) {
+            inputHandler.send(new Object[]{"IBM", 100f, 100L, System.currentTimeMillis()});
             eventCount++;
             if (eventCount % 2 == 0) {
                 Thread.sleep(1);
-                if (eventCount % 1000 == 0) {
+                if (eventCount % 10000 == 0) {
                     long currentTime = System.currentTimeMillis();
                     long timeToSleep = 1000 - (currentTime - startTime);
                     if (timeToSleep > 5) {

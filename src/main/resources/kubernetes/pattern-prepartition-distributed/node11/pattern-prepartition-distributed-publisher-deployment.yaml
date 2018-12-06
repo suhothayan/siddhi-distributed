@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pattern-prepartition-distributed-publisher-deployment
+  labels:
+    app: pattern-prepartition-distributed-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pattern-prepartition-distributed-publisher
+  template:
+    metadata:
+      labels:
+        app: pattern-prepartition-distributed-publisher
+    spec:
+      containers:
+      - name: pattern-prepartition-distributed-publisher
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.pattern.distributed.prepartition.EventPublisher"
+        -
+          name: CONSUME
+          value: "-"
+        -
+          name: PUBLISH
+          value: "pattern-prepartition-distributed-server1-service:80,pattern-prepartition-distributed-server2-service:80"
+        -
+          name: DATA1
+          value: "pattern-prepartition-distributed-server3-service:80,pattern-prepartition-distributed-server4-service:80,pattern-prepartition-distributed-server41-service:80"
+        -
+          name: DATA2
+          value: "pattern-prepartition-distributed-server5-service:80,pattern-prepartition-distributed-server6-service:80,pattern-prepartition-distributed-server61-service:80"

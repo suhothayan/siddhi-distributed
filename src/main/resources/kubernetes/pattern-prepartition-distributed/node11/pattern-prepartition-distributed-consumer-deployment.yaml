@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pattern-prepartition-distributed-consumer-deployment
+  labels:
+    app: pattern-prepartition-distributed-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pattern-prepartition-distributed-consumer
+  template:
+    metadata:
+      labels:
+        app: pattern-prepartition-distributed-consumer
+    spec:
+      containers:
+      - name: pattern-prepartition-distributed-consumer
+        image: suhothayan/siddhitest:latest
+        ports:
+        - containerPort: 80
+        env:
+        -
+          name: MAIN_CLASS
+          value: "org.suho.siddhi.pattern.distributed.prepartition.EventConsumer"
+        -
+          name: CONSUME
+          value: "80"
+        -
+          name: PUBLISH
+          value: "-"
+        -
+          name: DATA1
+          value: "-"
+        -
+          name: DATA2
+          value: "-"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: pattern-prepartition-distributed-consumer-service
+spec:
+  selector:
+    app: pattern-prepartition-distributed-consumer
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

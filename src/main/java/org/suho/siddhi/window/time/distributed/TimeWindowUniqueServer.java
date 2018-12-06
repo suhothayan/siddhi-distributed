@@ -20,7 +20,7 @@ public class TimeWindowUniqueServer {
         }
         Thread.sleep(3000);
 
-        String consume = "9883";
+        String consume = "9873";
         String publish = "127.0.0.1:9895";
         String data1 = "-";
         String data2 = "-";
@@ -41,14 +41,14 @@ public class TimeWindowUniqueServer {
                 "@app:statistics(reporter = 'console', interval = '5' ) \n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream PartialAggregateStockStream (symbol string, totalPrice double, totalVolume long, countVolume long, id string);\n" +
+                "define stream PartialAggregateStockStream (symbol string, totalPrice double, totalVolume long, countVolume long, id string, ts long);\n" +
                 "\n" +
                 "@sink(type='tcp', url='tcp://" + publish + "/consumer/AggregateStockStream', sync='true', @map(type='binary')) \n" +
-                "define stream AggregateStockStream (symbol string, totalPrice double, avgVolume double);\n" +
+                "define stream AggregateStockStream (symbol string, totalPrice double, avgVolume double, ts long);\n" +
                 "                \n" +
                 "@info(name = 'query1') \n" +
-                "from PartialAggregateStockStream#window.unique:ever(id,symbol) \n" +
-                "select symbol, sum(totalPrice) as totalPrice, sum(totalVolume)*1.0/sum(countVolume) as avgVolume \n" +
+                "from PartialAggregateStockStream##window.unique:ever(id,symbol) \n" +
+                "select symbol, sum(totalPrice) as totalPrice, sum(totalVolume)*1.0/sum(countVolume) as avgVolume , ts \n" +
                 "group by symbol \n" +
                 "insert into AggregateStockStream ;\n";
 

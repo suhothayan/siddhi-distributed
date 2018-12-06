@@ -39,7 +39,7 @@ spec:
           value: "time-window-distributed-unique-server-service:80"
         -
           name: DATA1
-          value: "4 min"
+          value: "2 min"
         -
           name: DATA2
           value: "1"

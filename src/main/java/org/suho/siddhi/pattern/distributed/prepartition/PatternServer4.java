@@ -40,7 +40,7 @@ public class PatternServer4 {
         Thread.sleep(5000);
 
         String consume = "9884";
-        String publish = "127.0.0.1:9885";
+        String publish = "127.0.0.1:9885,127.0.0.1:9886";
         String data1 = "1 min";
         String data2 = "60000";
         if (args.length != 0) {
@@ -66,20 +66,30 @@ public class PatternServer4 {
                 "@app:statistics(reporter = 'console', interval = '5' ) \n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream CardStreamS (cardId string, amount float, location string);\n" +
+                "define stream CardStreamS (cardId string, amount float, location string,ts long);\n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream PossibleFraudStream1 (initialPurchaseAmount float, timestamp long);\n" +
+                "define stream PossibleFraudStream1 (cardId string, location string, timestamp long,ts long);\n" +
                 "\n" +
                 "@sink(type='tcp', sync='true', @map(type='binary'), " +
                 "   @distribution(strategy='roundRobin', " +
                 "       " + destinations1 + ")) \n" +
-                "define stream PossibleFraudStream2 (initialPurchaseAmount float, timestamp long);\n" +
+                "define stream PossibleFraudStream2 (cardId string, timestamp long,ts long);\n" +
                 "\n" +
+                "from CardStreamS " +
+                "select cardId, location, ts as timestamp, ts " +
+                "insert into CardStream;" +
+                "" +
+                "from PossibleFraudStream1 " +
+                "select cardId, location, timestamp, ts  " +
+                "insert into CardStream;" +
+                "" +
+                "" +
                 "@info(name = 'query1') \n" +
-                "from every a=PossibleFraudStream1 ->  b = CardStreamS[(currentTimeMillis() - a.timestamp) < " + data2 + "]\n" +
+                "from every a=CardStream ->  b = CardStream[a.cardId==cardId and ifThenElse(a.location == 'A', location == 'B' and ((currentTimeMillis() - a.timestamp) < " + data2 + "), " +
+                "                                         location == 'A' and ((currentTimeMillis() - timestamp) < " + data2 + "))  ]\n" +
                 "    within " + data1 + "\n" +
-                "select a.initialPurchaseAmount, a.timestamp  \n" +
+                "select a.cardId as cardId, a.timestamp , a.ts \n" +
                 "insert into PossibleFraudStream2;\n" +
                 "";
 

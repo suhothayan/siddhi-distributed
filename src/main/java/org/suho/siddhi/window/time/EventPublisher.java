@@ -34,7 +34,7 @@ public class EventPublisher {
                 "@app:name('publisher')\n" +
                 "\n" +
                 "@sink(type='tcp', url='tcp://" + publish + "/time-window/StockEventStream', sync='true', @map(type='binary')) \n" +
-                "define stream StockEventStream (symbol string, price float, volume long);\n";
+                "define stream StockEventStream (symbol string, price float, volume long, ts long);\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
@@ -51,7 +51,7 @@ public class EventPublisher {
 
         //Sending events to Siddhi
         for (int i = 0; i < eventsToPublish; i++) {
-            inputHandler.send(new Object[]{"IBM", 100f, 100L});
+            inputHandler.send(new Object[]{"IBM", 100f, 100L, System.currentTimeMillis()});
             eventCount++;
             if (eventCount % 2 == 0) {
                 Thread.sleep(1);

@@ -38,8 +38,8 @@ public class JoinServer1 {
         }
 
         String consume = "9881";
-        String publish = "127.0.0.1:9885";
-        String data1 = "10000,10000";
+        String publish = "127.0.0.1:9875";
+        String data1 = "500,500";
         String data2 = "1";
         if (args.length != 0) {
             if (args.length == 4) {
@@ -59,20 +59,20 @@ public class JoinServer1 {
                 "@app:statistics(reporter = 'console', interval = '5' ) \n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream StreamA (symbol string, price float, volume long, seqNo long);\n" +
+                "define stream StreamA (symbol string, price float, volume long, seqNo long, ts long);\n" +
                 "\n" +
                 "@source(type='tcp', @map(type='binary')) \n" +
-                "define stream StreamB (symbol string, price float, volume long, seqNo long);\n" +
+                "define stream StreamB (symbol string, price float, volume long, seqNo long, ts long);\n" +
                 "\n" +
                 "@sink(type='tcp', url='tcp://" + publish + "/join/PartialOutputStream', sync='true', @map(type='binary')) \n" +
-                "define stream PartialOutputStream (sumPriceA double, countEvents long, sumPriceB double, id string);\n" +
+                "define stream PartialOutputStream (sumPriceA double, countEvents long, sumPriceB double, id string, ts long);\n" +
                 "                \n" +
                 "@info(name = 'query1') \n" +
                 "from StreamA#window.externalTime(seqNo, " + windowSizes[0] + ") join \n" +
                 "   StreamB#window.externalTime(seqNo, " + windowSizes[1] + ") \n" +
                 "   on StreamA.symbol == StreamB.symbol\n" +
                 "select sum(StreamA.price) as sumPriceA, count() as countEvents, \n" +
-                "   sum(StreamB.price) as sumPriceB, '" + data2 + "' as id  \n" +
+                "   sum(StreamB.price) as sumPriceB, '" + data2 + "' as id ,ifThenElse(StreamA.ts>StreamB.ts,StreamA.ts,StreamB.ts) as ts \n" +
                 "insert into PartialOutputStream;\n" +
                 "";
 

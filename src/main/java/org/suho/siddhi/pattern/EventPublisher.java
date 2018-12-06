@@ -55,7 +55,7 @@ public class EventPublisher {
                 "@app:name('publisher')\n" +
                 "\n" +
                 "@sink(type='tcp', url='tcp://" + publish + "/pattern/CardStream', sync='true', @map(type='binary')) \n" +
-                "define stream CardStream (cardId string, amount float, location string);\n";
+                "define stream CardStream (cardId string, amount float, location string, ts long);\n";
 
         SiddhiManager siddhiManager = new SiddhiManager();
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
@@ -65,19 +65,30 @@ public class EventPublisher {
         //Start SiddhiApp runtime
         siddhiAppRuntime.start();
 
-        long eventsToPublish= 100000000;
+        long eventsToPublish = 100000;
         int eventCount = 0;
         long startTime = System.currentTimeMillis();
         long startTimeStats = startTime;
         Random random = new Random();
+        String[] array = new String[]{"A", "B", "C"};
 
         //Sending events to Siddhi
         for (int i = 0; i < eventsToPublish; i++) {
-            if (i < 10000) {
-                inputHandler.send(new Object[]{"1234", random.nextInt(200) * 1.0f, "SL"});
+//            inputHandler.send(new Object[]{"1234", random.nextInt(200) * 1.0f, array[i % 3], System.currentTimeMillis()});
+//
+            if (i % 3 == 0) {
+                inputHandler.send(new Object[]{"" + i, 99f, "A", System.currentTimeMillis()});
+            } else if (i % 3 == 1) {
+                inputHandler.send(new Object[]{"" + (i - 1), 99f, "B", System.currentTimeMillis()});
             } else {
-                inputHandler.send(new Object[]{"1234", 99f, "SL"});
+                inputHandler.send(new Object[]{"" + (i - 2), 99f, "C", System.currentTimeMillis()});
             }
+
+//            if (i < 10000) {
+//                inputHandler.send(new Object[]{"1234", random.nextInt(200) * 1.0f, "SL",System.currentTimeMillis()});
+//            } else {
+//                inputHandler.send(new Object[]{"1234", 99f, "SL", System.currentTimeMillis()});
+//            }
             eventCount++;
             if (eventCount % 2 == 0) {
                 Thread.sleep(1);
@@ -85,7 +96,7 @@ public class EventPublisher {
                     long currentTime = System.currentTimeMillis();
                     long timeToSleep = 1000 - (currentTime - startTime);
                     if (timeToSleep > 5) {
-                        Thread.sleep(timeToSleep-5);
+                        Thread.sleep(timeToSleep - 5);
                     }
                     currentTime = System.currentTimeMillis();
                     startTime = currentTime;
